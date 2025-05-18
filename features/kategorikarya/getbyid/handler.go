@@ -23,7 +23,7 @@ type ErrorResponse struct {
 //	@Success		200	{object}	Response
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
-//	@Router			/kategori-karya/{id} [get]
+//	@Router			/api/kategori-karya/{id} [get]
 //	@Security		BearerAuth
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {

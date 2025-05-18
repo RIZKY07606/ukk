@@ -9,6 +9,22 @@ import (
 	"gorm.io/gorm"
 )
 
+type ResponseError struct {
+	Error string `json:"error"`
+}
+
+// GetKaryaUKKByID godoc
+// @Summary      Get Karya UKK by ID
+// @Description  Mengambil data Karya UKK berdasarkan ID
+// @Tags         KaryaUKK
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Karya UKK ID (UUID)"
+// @Success      200  {object}  Response
+// @Failure      400  {object}  ResponseError
+// @Failure      404  {object}  ResponseError
+// @Router       /api/karya-ukk/{id} [get]
+// @Security     BearerAuth
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")

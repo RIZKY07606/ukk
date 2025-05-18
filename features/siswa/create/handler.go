@@ -14,18 +14,17 @@ type ErrorResponse struct {
 }
 
 // Handler godoc
-//
-//	@Summary		Create Role
-//	@Description	Create a new role
-//	@Tags			role
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		Request		true	"Role create request"
-//	@Success		200		{object}	Response
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
-//	@Router			/role [post]
-//	@Security		BearerAuth
+// @Summary      Create Siswa
+// @Description  Membuat data siswa baru
+// @Tags         siswa
+// @Accept       json
+// @Produce      json
+// @Param        request  body      Request       true  "Request body data siswa"
+// @Success      200      {object}  Response
+// @Failure      400      {object}  ErrorResponse
+// @Failure      500      {object}  ErrorResponse
+// @Router       /api/siswa [post]
+// @Security     BearerAuth
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var req Request

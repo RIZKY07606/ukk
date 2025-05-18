@@ -24,7 +24,7 @@ type ErrorResponse struct {
 //	@Success		200		{object}	Response
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
-//	@Router			/review [post]
+//	@Router			/api/review [post]
 //	@Security		BearerAuth
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {

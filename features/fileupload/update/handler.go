@@ -10,6 +10,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // Handler godoc
 // @Summary      Update FileUpload by ID
 // @Description  Mengupdate data FileUpload berdasarkan ID
@@ -19,11 +23,10 @@ import (
 // @Param        id    path      string  true  "FileUpload ID (UUID)"
 // @Param        body  body      Request true  "Data file yang diupdate"
 // @Success      200   {object}  Response
-// @Failure      400   {object}  map[string]string{"error": "ID tidak valid atau request invalid"}
-// @Failure      404   {object}  map[string]string{"error": "File tidak ditemukan"}
-// @Failure      500   {object}  map[string]string{"error": "Gagal mengupdate file"}
-// @Router       /fileupload/{id} [put]
-
+// @Failure      400   {object}  ErrorResponse
+// @Failure      404   {object}  ErrorResponse
+// @Failure      500   {object}  ErrorResponse
+// @Router       /api/fileupload/{id} [put]
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")

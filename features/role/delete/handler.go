@@ -27,7 +27,7 @@ type SuccessResponse struct {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
-//	@Router			/role/{id} [delete]
+//	@Router			/api/role/{id} [delete]
 //	@Security		BearerAuth
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {

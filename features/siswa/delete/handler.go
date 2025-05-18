@@ -26,7 +26,7 @@ type ErrorResponse struct {
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
-// @Router       /siswa/{id} [delete]
+// @Router       /api/siswa/{id} [delete]
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")

@@ -19,7 +19,7 @@ type ErrorResponse struct {
 // @Produce      json
 // @Success      200  {array}   Response
 // @Failure      500  {object}  ErrorResponse
-// @Router       /siswa [get]
+// @Router       /api/siswa [get]
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var siswas []entities.Siswa

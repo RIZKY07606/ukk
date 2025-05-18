@@ -7,15 +7,18 @@ import (
 	"gorm.io/gorm"
 )
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // Handler godoc
 // @Summary      Get All FileUploads
 // @Description  Mengambil semua data FileUpload
 // @Tags         FileUpload
 // @Produce      json
 // @Success      200  {array}   Response
-// @Failure      500  {object}  map[string]string{"error": "Deskripsi error"}
-// @Router       /fileupload [get]
-
+// @Failure      500  {object}  ErrorResponse
+// @Router       /api/fileupload [get]
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var files []entities.FileUpload

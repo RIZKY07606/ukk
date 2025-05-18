@@ -7,15 +7,18 @@ import (
 	"gorm.io/gorm"
 )
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // Handler godoc
 // @Summary      Get all KaryaUKK
 // @Description  Mengambil semua data karya UKK
 // @Tags         KaryaUKK
 // @Produce      json
 // @Success      200  {array}   Response
-// @Failure      500  {object}  map[string]string{"error": "Gagal mengambil data karya"}
-// @Router       /karyaukk [get]
-
+// @Failure      500  {object}  ErrorResponse
+// @Router       /api/karyaukk [get]
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var karya []entities.KaryaUKK

@@ -34,6 +34,11 @@ definitions:
       message:
         type: string
     type: object
+  getbyid.ResponseError:
+    properties:
+      error:
+        type: string
+    type: object
   getprofile.GetUserResponse:
     properties:
       email:
@@ -57,9 +62,190 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         type: string
     type: object
+  ukk-smkn2_features_fileupload_create.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_create.Request:
+    properties:
+      karya_id:
+        type: string
+      nama:
+        type: string
+      tipe:
+        type: string
+      url:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_create.Response:
+    properties:
+      file_id:
+        type: string
+      karya_id:
+        type: string
+      nama:
+        type: string
+      tipe:
+        type: string
+      url:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_delete.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_delete.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_getall.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_getall.Response:
+    properties:
+      file_id:
+        type: string
+      karya_id:
+        type: string
+      nama:
+        type: string
+      tipe:
+        type: string
+      url:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_getbyid.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_getbyid.Response:
+    properties:
+      file_id:
+        type: string
+      karya_id:
+        type: string
+      nama:
+        type: string
+      tipe:
+        type: string
+      url:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_update.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_update.Request:
+    properties:
+      karya_id:
+        type: string
+      nama:
+        type: string
+      tipe:
+        type: string
+      url:
+        type: string
+    type: object
+  ukk-smkn2_features_fileupload_update.Response:
+    properties:
+      file_id:
+        type: string
+      karya_id:
+        type: string
+      nama:
+        type: string
+      tipe:
+        type: string
+      url:
+        type: string
+    type: object
+  ukk-smkn2_features_karyaukk_create.ErrorResponse:
+    properties:
+      error:
+        example: Deskripsi error
+        type: string
+    type: object
+  ukk-smkn2_features_karyaukk_create.Request:
+    properties:
+      deskripsi:
+        type: string
+      judul:
+        type: string
+      kategori_id:
+        type: string
+      link:
+        type: string
+      siswa_id:
+        type: string
+    type: object
+  ukk-smkn2_features_karyaukk_create.Response:
+    properties:
+      deskripsi:
+        type: string
+      judul:
+        type: string
+      karya_id:
+        type: string
+      kategori_id:
+        type: string
+      link:
+        type: string
+      siswa_id:
+        type: string
+    type: object
   ukk-smkn2_features_karyaukk_delete.ErrorResponse:
     properties:
       error:
+        type: string
+    type: object
+  ukk-smkn2_features_karyaukk_getall.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_karyaukk_getall.Response:
+    properties:
+      created_at:
+        type: string
+      deskripsi:
+        type: string
+      judul:
+        type: string
+      karya_id:
+        type: string
+      kategori_id:
+        type: string
+      link:
+        type: string
+      siswa_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  ukk-smkn2_features_karyaukk_getbyid.Response:
+    properties:
+      created_at:
+        type: string
+      deskripsi:
+        type: string
+      judul:
+        type: string
+      karya_id:
+        type: string
+      kategori_id:
+        type: string
+      link:
+        type: string
+      siswa_id:
+        type: string
+      updated_at:
         type: string
     type: object
   ukk-smkn2_features_karyaukk_update.ErrorResponse:
@@ -140,6 +326,23 @@ definitions:
         type: string
     type: object
   ukk-smkn2_features_kategorikarya_getbyid.Response:
+    properties:
+      kategori_id:
+        type: string
+      nama:
+        type: string
+    type: object
+  ukk-smkn2_features_kategorikarya_update.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  ukk-smkn2_features_kategorikarya_update.Request:
+    properties:
+      nama:
+        type: string
+    type: object
+  ukk-smkn2_features_kategorikarya_update.Response:
     properties:
       kategori_id:
         type: string
@@ -464,60 +667,230 @@ paths:
             type: object
       tags:
       - auth
-  /api/user/profile:
+  /api/fileupload:
     get:
-      description: Get Logged user profile
+      description: Mengambil semua data FileUpload
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/getprofile.GetUserResponse'
-        "404":
-          description: Not Found
+            items:
+              $ref: '#/definitions/ukk-smkn2_features_fileupload_getall.Response'
+            type: array
+        "500":
+          description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_getall.ErrorResponse'
+      summary: Get All FileUploads
       tags:
-      - user
-  /api/user/register:
+      - FileUpload
     post:
       consumes:
       - application/json
-      description: Register a new user
+      description: Membuat data file upload baru
       parameters:
-      - description: Create user request body
+      - description: Data file upload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/ukk-smkn2_features_fileupload_create.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_create.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_create.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_create.ErrorResponse'
+      summary: Create FileUpload
+      tags:
+      - FileUpload
+  /api/fileupload/{id}:
+    delete:
+      description: Menghapus data FileUpload berdasarkan ID
+      parameters:
+      - description: FileUpload ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_delete.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse'
+      summary: Delete FileUpload by ID
+      tags:
+      - FileUpload
+    get:
+      description: Mengambil data FileUpload berdasarkan ID
+      parameters:
+      - description: FileUpload ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_getbyid.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_getbyid.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_getbyid.ErrorResponse'
+      summary: Get FileUpload by ID
+      tags:
+      - FileUpload
+    put:
+      consumes:
+      - application/json
+      description: Mengupdate data FileUpload berdasarkan ID
+      parameters:
+      - description: FileUpload ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data file yang diupdate
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ukk-smkn2_features_fileupload_update.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_update.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse'
+      summary: Update FileUpload by ID
+      tags:
+      - FileUpload
+  /api/karya-ukk/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Mengambil data Karya UKK berdasarkan ID
+      parameters:
+      - description: Karya UKK ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_karyaukk_getbyid.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/getbyid.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/getbyid.ResponseError'
+      security:
+      - BearerAuth: []
+      summary: Get Karya UKK by ID
+      tags:
+      - KaryaUKK
+  /api/karyaukk:
+    get:
+      description: Mengambil semua data karya UKK
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ukk-smkn2_features_karyaukk_getall.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_karyaukk_getall.ErrorResponse'
+      summary: Get all KaryaUKK
+      tags:
+      - KaryaUKK
+    post:
+      consumes:
+      - application/json
+      description: Membuat karya UKK baru dengan judul, deskripsi, link, siswa, dan
+        kategori
+      parameters:
+      - description: Request body untuk membuat karya UKK
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/create.CreateUserRequest'
+          $ref: '#/definitions/ukk-smkn2_features_karyaukk_create.Request'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/create.CreateUserResponseWrapper'
+            $ref: '#/definitions/ukk-smkn2_features_karyaukk_create.Response'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ukk-smkn2_features_karyaukk_create.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ukk-smkn2_features_karyaukk_create.ErrorResponse'
+      summary: Create a new KaryaUKK
       tags:
-      - user
-  /karyaukk/{id}:
+      - KaryaUKK
+  /api/karyaukk/{id}:
     delete:
       description: Menghapus karya UKK berdasarkan ID yang diberikan
       parameters:
@@ -586,7 +959,7 @@ paths:
       summary: Update a KaryaUKK by ID
       tags:
       - KaryaUKK
-  /kategori-karya:
+  /api/kategori-karya:
     get:
       description: Mengembalikan list semua kategori karya
       produces:
@@ -638,7 +1011,7 @@ paths:
       summary: Buat Kategori Karya
       tags:
       - kategori_karya
-  /kategori-karya/{id}:
+  /api/kategori-karya/{id}:
     delete:
       description: Hapus satu kategori karya berdasarkan ID
       parameters:
@@ -699,7 +1072,47 @@ paths:
       summary: Ambil kategori karya berdasarkan ID
       tags:
       - kategori_karya
-  /review:
+    put:
+      consumes:
+      - application/json
+      description: Mengubah nama kategori karya berdasarkan ID
+      parameters:
+      - description: Kategori ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ukk-smkn2_features_kategorikarya_update.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_kategorikarya_update.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update kategori karya
+      tags:
+      - kategori_karya
+  /api/review:
     get:
       description: Mengambil semua review yang ada di database
       produces:
@@ -751,7 +1164,7 @@ paths:
       summary: Buat review baru
       tags:
       - review
-  /review/{id}:
+  /api/review/{id}:
     delete:
       description: Hapus review berdasarkan ID
       parameters:
@@ -852,7 +1265,7 @@ paths:
       summary: Update Review by ID
       tags:
       - review
-  /role:
+  /api/role:
     get:
       description: Get list of all roles
       produces:
@@ -883,28 +1296,28 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/ukk-smkn2_features_siswa_create.Request'
+          $ref: '#/definitions/ukk-smkn2_features_role_create.Request'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/ukk-smkn2_features_siswa_create.Response'
+            $ref: '#/definitions/ukk-smkn2_features_role_create.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse'
+            $ref: '#/definitions/ukk-smkn2_features_role_create.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse'
+            $ref: '#/definitions/ukk-smkn2_features_role_create.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create Role
       tags:
       - role
-  /role/{id}:
+  /api/role/{id}:
     delete:
       description: Delete a role by ID
       parameters:
@@ -965,7 +1378,47 @@ paths:
       summary: Get Role by ID
       tags:
       - role
-  /siswa:
+    put:
+      consumes:
+      - application/json
+      description: Memperbarui data role dengan ID tertentu
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body data role
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ukk-smkn2_features_role_update.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_role_update.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_role_update.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_role_update.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_role_update.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Role by ID
+      tags:
+      - role
+  /api/siswa:
     get:
       description: Mengambil semua data siswa
       produces:
@@ -984,7 +1437,38 @@ paths:
       summary: Get All Siswa
       tags:
       - siswa
-  /siswa/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Membuat data siswa baru
+      parameters:
+      - description: Request body data siswa
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ukk-smkn2_features_siswa_create.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_siswa_create.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Siswa
+      tags:
+      - siswa
+  /api/siswa/{id}:
     delete:
       description: Menghapus data siswa berdasarkan ID
       parameters:
@@ -1079,6 +1563,59 @@ paths:
       summary: Update Siswa by ID
       tags:
       - siswa
+  /api/user/profile:
+    get:
+      description: Get Logged user profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/getprofile.GetUserResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - user
+  /api/user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Create user request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/create.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/create.CreateUserResponseWrapper'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      tags:
+      - user
 securityDefinitions:
   BearerAuth:
     in: header

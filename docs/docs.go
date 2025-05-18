@@ -66,42 +66,36 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/profile": {
+        "/api/fileupload": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get Logged user profile",
+                "description": "Mengambil semua data FileUpload",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "FileUpload"
                 ],
+                "summary": "Get All FileUploads",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/getprofile.GetUserResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ukk-smkn2_features_fileupload_getall.Response"
+                            }
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getall.ErrorResponse"
                         }
                     }
                 }
-            }
-        },
-        "/api/user/register": {
+            },
             "post": {
-                "description": "Register a new user",
+                "description": "Membuat data file upload baru",
                 "consumes": [
                     "application/json"
                 ],
@@ -109,16 +103,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "FileUpload"
                 ],
+                "summary": "Create FileUpload",
                 "parameters": [
                     {
-                        "description": "Create user request body",
-                        "name": "request",
+                        "description": "Data file upload",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.CreateUserRequest"
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.Request"
                         }
                     }
                 ],
@@ -126,31 +121,290 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/create.CreateUserResponseWrapper"
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/fileupload/{id}": {
+            "get": {
+                "description": "Mengambil data FileUpload berdasarkan ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileUpload"
+                ],
+                "summary": "Get FileUpload by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileUpload ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getbyid.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getbyid.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getbyid.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Mengupdate data FileUpload berdasarkan ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileUpload"
+                ],
+                "summary": "Update FileUpload by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileUpload ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data file yang diupdate",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Menghapus data FileUpload berdasarkan ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileUpload"
+                ],
+                "summary": "Delete FileUpload by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileUpload ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/karya-ukk/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengambil data Karya UKK berdasarkan ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KaryaUKK"
+                ],
+                "summary": "Get Karya UKK by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Karya UKK ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_getbyid.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/getbyid.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/getbyid.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/karyaukk": {
+            "get": {
+                "description": "Mengambil semua data karya UKK",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KaryaUKK"
+                ],
+                "summary": "Get all KaryaUKK",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ukk-smkn2_features_karyaukk_getall.Response"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_getall.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Membuat karya UKK baru dengan judul, deskripsi, link, siswa, dan kategori",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KaryaUKK"
+                ],
+                "summary": "Create a new KaryaUKK",
+                "parameters": [
+                    {
+                        "description": "Request body untuk membuat karya UKK",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/karyaukk/{id}": {
+        "/api/karyaukk/{id}": {
             "put": {
                 "description": "Mengupdate karya UKK berdasarkan ID yang diberikan",
                 "consumes": [
@@ -254,7 +508,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/kategori-karya": {
+        "/api/kategori-karya": {
             "get": {
                 "security": [
                     {
@@ -337,7 +591,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/kategori-karya/{id}": {
+        "/api/kategori-karya/{id}": {
             "get": {
                 "security": [
                     {
@@ -378,6 +632,68 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_getbyid.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengubah nama kategori karya berdasarkan ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kategori_karya"
+                ],
+                "summary": "Update kategori karya",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Kategori ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse"
                         }
                     }
                 }
@@ -433,7 +749,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/review": {
+        "/api/review": {
             "get": {
                 "security": [
                     {
@@ -516,7 +832,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/review/{id}": {
+        "/api/review/{id}": {
             "get": {
                 "security": [
                     {
@@ -674,7 +990,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/role": {
+        "/api/role": {
             "get": {
                 "security": [
                     {
@@ -731,33 +1047,33 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.Request"
+                            "$ref": "#/definitions/ukk-smkn2_features_role_create.Request"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.Response"
+                            "$ref": "#/definitions/ukk-smkn2_features_role_create.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse"
+                            "$ref": "#/definitions/ukk-smkn2_features_role_create.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse"
+                            "$ref": "#/definitions/ukk-smkn2_features_role_create.ErrorResponse"
                         }
                     }
                 }
             }
         },
-        "/role/{id}": {
+        "/api/role/{id}": {
             "get": {
                 "security": [
                     {
@@ -798,6 +1114,68 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/ukk-smkn2_features_role_getbyid.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Memperbarui data role dengan ID tertentu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Update Role by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request body data role",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_role_update.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_role_update.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_role_update.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_role_update.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_role_update.ErrorResponse"
                         }
                     }
                 }
@@ -853,7 +1231,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/siswa": {
+        "/api/siswa": {
             "get": {
                 "description": "Mengambil semua data siswa",
                 "produces": [
@@ -880,9 +1258,58 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Membuat data siswa baru",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "siswa"
+                ],
+                "summary": "Create Siswa",
+                "parameters": [
+                    {
+                        "description": "Request body data siswa",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
-        "/siswa/{id}": {
+        "/api/siswa/{id}": {
             "get": {
                 "description": "Mengambil data siswa berdasarkan ID",
                 "produces": [
@@ -1024,6 +1451,90 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/user/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Logged user profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getprofile.GetUserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/register": {
+            "post": {
+                "description": "Register a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "parameters": [
+                    {
+                        "description": "Create user request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateUserResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1078,6 +1589,14 @@ const docTemplate = `{
                 }
             }
         },
+        "getbyid.ResponseError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "getprofile.GetUserResponse": {
             "type": "object",
             "properties": {
@@ -1112,10 +1631,290 @@ const docTemplate = `{
                 }
             }
         },
+        "ukk-smkn2_features_fileupload_create.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_create.Request": {
+            "type": "object",
+            "properties": {
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_create.Response": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_delete.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_delete.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_getall.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_getall.Response": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_getbyid.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_getbyid.Response": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_update.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_update.Request": {
+            "type": "object",
+            "properties": {
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_fileupload_update.Response": {
+            "type": "object",
+            "properties": {
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_karyaukk_create.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Deskripsi error"
+                }
+            }
+        },
+        "ukk-smkn2_features_karyaukk_create.Request": {
+            "type": "object",
+            "properties": {
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_karyaukk_create.Response": {
+            "type": "object",
+            "properties": {
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                }
+            }
+        },
         "ukk-smkn2_features_karyaukk_delete.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_karyaukk_getall.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_karyaukk_getall.Response": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_karyaukk_getbyid.Response": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -1242,6 +2041,33 @@ const docTemplate = `{
             }
         },
         "ukk-smkn2_features_kategorikarya_getbyid.Response": {
+            "type": "object",
+            "properties": {
+                "kategori_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_kategorikarya_update.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_kategorikarya_update.Request": {
+            "type": "object",
+            "properties": {
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "ukk-smkn2_features_kategorikarya_update.Response": {
             "type": "object",
             "properties": {
                 "kategori_id": {

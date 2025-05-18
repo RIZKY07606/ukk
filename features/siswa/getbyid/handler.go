@@ -23,7 +23,7 @@ type ErrorResponse struct {
 // @Success      200  {object}  Response
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
-// @Router       /siswa/{id} [get]
+// @Router       /api/siswa/{id} [get]
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id := c.Params("id")

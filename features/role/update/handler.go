@@ -15,20 +15,19 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
-// Handler mengupdate data siswa berdasarkan ID
-//
-// @Summary      Update Siswa by ID
-// @Description  Memperbarui data siswa dengan ID tertentu
-// @Tags         siswa
+// Handler godoc
+// @Summary      Update Role by ID
+// @Description  Memperbarui data role dengan ID tertentu
+// @Tags         role
 // @Accept       json
 // @Produce      json
-// @Param        id    path      string  true  "Siswa ID"
-// @Param        body  body      Request true  "Request body data siswa"
+// @Param        id    path      string       true  "Role ID"
+// @Param        body  body      Request      true  "Request body data role"
 // @Success      200   {object}  Response
 // @Failure      400   {object}  ErrorResponse
 // @Failure      404   {object}  ErrorResponse
 // @Failure      500   {object}  ErrorResponse
-// @Router       /siswa/{id} [put]
+// @Router       /api/role/{id} [put]
 // @Security     BearerAuth
 func Handler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
