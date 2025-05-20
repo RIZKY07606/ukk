@@ -1,8 +1,6 @@
 package delete
 
 import (
-	"net/http"
-
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,33 +8,34 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-// @Summary      Delete a KaryaUKK by ID
-// @Description  Menghapus karya UKK berdasarkan ID yang diberikan
-// @Tags         KaryaUKK
-// @Produce      json
-// @Param        id   path      string  true  "KaryaUKK ID (UUID)"
-// @Success      200  {object}  MessageResponse
-// @Failure      400  {object}  ErrorResponse
-// @Failure      404  {object}  ErrorResponse
-// @Failure      500  {object}  ErrorResponse
-// @Router       /api/karyaukk/{id} [delete]
-func Handler(db *gorm.DB) fiber.Handler {
+// DeleteKaryaUKK godoc
+//
+//	@Summary		Delete karya UKK
+//	@Description	Delete karya UKK by ID
+//	@Tags			karya_ukk
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"KaryaUKK ID"
+//	@Success		200		{object}	map[string]interface{}
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
+//	@Router			/api/karya-ukk/{id} [delete]
+func DeleteKaryaUKK(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		karyaID, err := uuid.Parse(id)
+		idParam := c.Params("id")
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
 
-		if err := db.Delete(&entities.KaryaUKK{}, "id = ?", karyaID).Error; err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Gagal menghapus karya"})
+		if err := db.Delete(&entities.KaryaUKK{}, "id = ?", id).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to delete karya UKK"})
 		}
 
-		return c.JSON(fiber.Map{"message": "Karya berhasil dihapus"})
+		return c.JSON(fiber.Map{
+			"code":    200,
+			"message": "Karya UKK deleted successfully",
+		})
 	}
 }

@@ -6,16 +6,17 @@ import (
 	getallKarya "ukk-smkn2/features/karyaukk/getall"
 	getbyidKarya "ukk-smkn2/features/karyaukk/getbyid"
 	updateKarya "ukk-smkn2/features/karyaukk/update"
+	"ukk-smkn2/infrastructure/middleware"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
 func RegisterRoutes(api fiber.Router, db *gorm.DB) {
-	groupKarya := api.Group("/karya-ukk")
-	groupKarya.Post("/", createKarya.Handler(db))
-	groupKarya.Get("/", getallKarya.Handler(db))
-	groupKarya.Get("/:id", getbyidKarya.Handler(db))
-	groupKarya.Put("/:id", updateKarya.Handler(db))
-	groupKarya.Delete("/:id", deleteKarya.Handler(db))
+	groupKarya := api.Group("/karya-ukk", middleware.JWTProtected())
+	groupKarya.Post("/", createKarya.CreateKaryaUKK(db))
+	groupKarya.Get("/", getallKarya.GetAllKaryaUKK(db))
+	groupKarya.Get("/:id", getbyidKarya.GetKaryaUKKByID(db))
+	groupKarya.Put("/:id", updateKarya.UpdateKaryaUKK(db))
+	groupKarya.Delete("/:id", deleteKarya.DeleteKaryaUKK(db))
 }

@@ -1,11 +1,16 @@
 package update
 
-import "github.com/google/uuid"
+type UpdateFileUploadResponse struct {
+	FileID    string `json:"file_id"`
+	Nama      string `json:"nama"`
+	Tipe      string `json:"tipe"`
+	URL       string `json:"url"`
+	KaryaID   string `json:"karya_id"`
+	UpdatedAt string `json:"updated_at"`
+}
 
-type Response struct {
-	ID      uuid.UUID `json:"file_id"`
-	Nama    string    `json:"nama"`
-	Tipe    string    `json:"tipe,omitempty"`
-	URL     string    `json:"url,omitempty"`
-	KaryaID uuid.UUID `json:"karya_id"`
+type UpdateFileUploadResponseWrapper struct {
+	Code    int                      `json:"code"`
+	Message string                   `json:"message"`
+	Data    UpdateFileUploadResponse `json:"data"`
 }

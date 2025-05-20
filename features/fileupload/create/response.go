@@ -1,11 +1,16 @@
 package create
 
-import "github.com/google/uuid"
+type CreateFileUploadResponse struct {
+	FileID    string `json:"file_id"`
+	Nama      string `json:"nama"`
+	Tipe      string `json:"tipe"`
+	URL       string `json:"url"`
+	KaryaID   string `json:"karya_id"`
+	CreatedAt string `json:"created_at"`
+}
 
-type Response struct {
-	ID      uuid.UUID `json:"file_id"`
-	Nama    string    `json:"nama"`
-	Tipe    string    `json:"tipe,omitempty"`
-	URL     string    `json:"url,omitempty"`
-	KaryaID uuid.UUID `json:"karya_id"`
+type CreateFileUploadResponseWrapper struct {
+	Code    int                      `json:"code"`
+	Message string                   `json:"message"`
+	Data    CreateFileUploadResponse `json:"data"`
 }

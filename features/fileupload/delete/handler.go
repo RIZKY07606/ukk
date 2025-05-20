@@ -4,44 +4,30 @@ import (
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-type SuccessResponse struct {
-	Message string `json:"message"`
-}
-
-// Handler godoc
-// @Summary      Delete FileUpload by ID
-// @Description  Menghapus data FileUpload berdasarkan ID
-// @Tags         FileUpload
-// @Produce      json
-// @Param        id   path      string  true  "FileUpload ID (UUID)"
-// @Success      200  {object}  SuccessResponse
-// @Failure      400  {object}  ErrorResponse
-// @Failure      404  {object}  ErrorResponse
-// @Failure      500  {object}  ErrorResponse
-// @Router       /api/fileupload/{id} [delete]
-func Handler(db *gorm.DB) fiber.Handler {
+// DeleteFileUpload godoc
+// @Summary     Delete file upload
+// @Description Hapus FileUpload berdasarkan ID
+// @Tags        file_upload
+// @Produce     json
+// @Param       id path string true "FileUpload ID"
+// @Success     200 {object} map[string]string
+// @Failure     400 {object} map[string]string
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /api/file-upload/{id} [delete]
+func DeleteFileUpload(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		if id == "" {
-			return c.Status(400).JSON(fiber.Map{"error": "ID harus diisi"})
+		idStr := c.Params("id")
+		if _, err := uuid.Parse(idStr); err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
-
-		res := db.Delete(&entities.FileUpload{}, "id = ?", id)
-		if res.Error != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal menghapus file"})
+		if err := db.Delete(&entities.FileUpload{}, "id = ?", idStr).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Gagal menghapus file upload"})
 		}
-
-		if res.RowsAffected == 0 {
-			return c.Status(404).JSON(fiber.Map{"error": "File tidak ditemukan"})
-		}
-
-		return c.JSON(fiber.Map{"message": "File berhasil dihapus"})
+		return c.JSON(fiber.Map{"message": "FileUpload berhasil dihapus"})
 	}
 }

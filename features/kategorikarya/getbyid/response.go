@@ -1,8 +1,12 @@
 package getbyid
 
-import "github.com/google/uuid"
+type GetKategoriKaryaByIDResponse struct {
+	KategoriID string `json:"kategori_id"`
+	Nama       string `json:"nama"`
+}
 
-type Response struct {
-	ID   uuid.UUID `json:"kategori_id"`
-	Nama string    `json:"nama"`
+type GetKategoriKaryaByIDResponseWrapper struct {
+	Code    int                          `json:"code"`
+	Message string                       `json:"message"`
+	Data    GetKategoriKaryaByIDResponse `json:"data"`
 }

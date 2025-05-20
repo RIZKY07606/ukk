@@ -7,35 +7,43 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
+// GetAllKategoriKarya godoc
 //
-//	@Summary		Ambil semua kategori karya
-//	@Description	Mengembalikan list semua kategori karya
+//	@Summary		Get all kategori karya
+//	@Description	Get all kategori karya, optional filter by name (query param 'nama')
 //	@Tags			kategori_karya
+//	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}		Response
-//	@Failure		500	{object}	ErrorResponse
+//	@Param			nama	query		string	false	"Filter by name"
+//	@Success		200		{object}	GetAllKategoriKaryaResponseWrapper
+//	@Failure		500		{object}	map[string]string
 //	@Router			/api/kategori-karya [get]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+func GetAllKategoriKarya(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var kategori []entities.KategoriKarya
-		if err := db.Find(&kategori).Error; err != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal mengambil data kategori karya"})
+		var kategoris []entities.KategoriKarya
+		namaFilter := c.Query("nama")
+
+		query := db.Model(&entities.KategoriKarya{})
+		if namaFilter != "" {
+			query = query.Where("nama ILIKE ?", "%"+namaFilter+"%") // ILIKE for case-insensitive on Postgres; gunakan LIKE kalau MySQL
 		}
 
-		var responses []Response
-		for _, k := range kategori {
-			responses = append(responses, Response{
-				ID:   k.ID,
-				Nama: k.Nama,
+		if err := query.Find(&kategoris).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch kategori karya"})
+		}
+
+		var data []GetAllKategoriKaryaResponse
+		for _, k := range kategoris {
+			data = append(data, GetAllKategoriKaryaResponse{
+				KategoriID: k.ID.String(),
+				Nama:       k.Nama,
 			})
 		}
 
-		return c.JSON(responses)
+		return c.JSON(GetAllKategoriKaryaResponseWrapper{
+			Code:    200,
+			Message: "Success",
+			Data:    data,
+		})
 	}
 }

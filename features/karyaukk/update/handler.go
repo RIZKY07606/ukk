@@ -1,8 +1,8 @@
 package update
 
 import (
-	"net/http"
 	"time"
+
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,74 +10,61 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-// @Summary      Update a KaryaUKK by ID
-// @Description  Mengupdate karya UKK berdasarkan ID yang diberikan
-// @Tags         KaryaUKK
-// @Accept       json
-// @Produce      json
-// @Param        id     path      string   true  "KaryaUKK ID (UUID)"
-// @Param        data   body      Request  true  "Data karya UKK yang akan diupdate"
-// @Success      200    {object}  Response
-// @Failure      400    {object}  ErrorResponse
-// @Failure      404    {object}  ErrorResponse
-// @Failure      500    {object}  ErrorResponse
-// @Router       /api/karyaukk/{id} [put]
-func Handler(db *gorm.DB) fiber.Handler {
+// UpdateKaryaUKK godoc
+//
+//	@Summary		Update karya UKK
+//	@Description	Update karya UKK by ID
+//	@Tags			karya_ukk
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string					true	"KaryaUKK ID"
+//	@Param			request	body		UpdateKaryaUKKRequest	true	"Update body"
+//	@Success		200		{object}	UpdateKaryaUKKResponseWrapper
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
+//	@Router			/api/karya-ukk/{id} [put]
+func UpdateKaryaUKK(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		karyaID, err := uuid.Parse(id)
+		idParam := c.Params("id")
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
 
-		var req Request
+		var req UpdateKaryaUKKRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Request body invalid"})
-		}
-
-		if req.Judul == "" {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Judul wajib diisi"})
-		}
-
-		// Parse SiswaID dan KategoriID ke uuid.UUID
-		siswaID, err := uuid.Parse(req.SiswaID)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "SiswaID tidak valid"})
-		}
-
-		kategoriID, err := uuid.Parse(req.KategoriID)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "KategoriID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
 
 		var karya entities.KaryaUKK
-		if err := db.First(&karya, "id = ?", karyaID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Karya tidak ditemukan"})
+		if err := db.First(&karya, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "Karya UKK not found"})
 		}
 
 		karya.Judul = req.Judul
 		karya.Deskripsi = req.Deskripsi
+		karya.Thumbnail = req.Thumbnail
 		karya.Link = req.Link
-		karya.SiswaID = siswaID
-		karya.KategoriID = kategoriID
 		karya.UpdatedAt = time.Now()
 
 		if err := db.Save(&karya).Error; err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Gagal update karya"})
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to update karya UKK"})
 		}
 
-		return c.JSON(Response{
-			ID:         karya.ID,
-			Judul:      karya.Judul,
-			Deskripsi:  karya.Deskripsi,
-			Link:       karya.Link,
-			SiswaID:    karya.SiswaID,
-			KategoriID: karya.KategoriID,
+		return c.JSON(UpdateKaryaUKKResponseWrapper{
+			Code:    200,
+			Message: "Karya UKK updated successfully",
+			Data: UpdateKaryaUKKResponse{
+				KaryaID:    karya.ID.String(),
+				Judul:      karya.Judul,
+				Deskripsi:  karya.Deskripsi,
+				Thumbnail:  karya.Thumbnail,
+				Link:       karya.Link,
+				SiswaID:    karya.SiswaID.String(),
+				KategoriID: karya.KategoriID.String(),
+				AdminID:    karya.AdminID.String(),
+			},
 		})
 	}
 }

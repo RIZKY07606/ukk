@@ -1,5 +1,5 @@
 package create
 
-type Request struct {
+type CreateKategoriKaryaRequest struct {
 	Nama string `json:"nama"`
 }

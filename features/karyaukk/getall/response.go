@@ -1,18 +1,18 @@
 package getall
 
-import (
-	"time"
+type GetAllKaryaUKKResponse struct {
+	KaryaID    string `json:"karya_id"`
+	Judul      string `json:"judul"`
+	Deskripsi  string `json:"deskripsi,omitempty"`
+	Thumbnail  string `json:"thumbnail,omitempty"`
+	Link       string `json:"link,omitempty"`
+	SiswaID    string `json:"siswa_id"`
+	KategoriID string `json:"kategori_id"`
+	AdminID    string `json:"admin_id"`
+}
 
-	"github.com/google/uuid"
-)
-
-type Response struct {
-	ID         uuid.UUID `json:"karya_id"`
-	Judul      string    `json:"judul"`
-	Deskripsi  string    `json:"deskripsi,omitempty"`
-	Link       string    `json:"link,omitempty"`
-	SiswaID    uuid.UUID `json:"siswa_id"`
-	KategoriID uuid.UUID `json:"kategori_id"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+type GetAllKaryaUKKResponseWrapper struct {
+	Code    int                      `json:"code"`
+	Message string                   `json:"message"`
+	Data    []GetAllKaryaUKKResponse `json:"data"`
 }

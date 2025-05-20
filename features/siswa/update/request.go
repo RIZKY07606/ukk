@@ -1,9 +1,8 @@
 package update
 
-type Request struct {
+type UpdateSiswaRequest struct {
 	NIS     string `json:"nis"`
 	Nama    string `json:"nama"`
 	Kelas   string `json:"kelas"`
 	Jurusan string `json:"jurusan"`
-	UserID  string `json:"user_id"`
 }

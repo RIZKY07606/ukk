@@ -1,7 +1,7 @@
 package getprofile
 
 import (
-	r "ukk-smkn2/infrastructure/repositories/user"
+	r "ukk-smkn2/infrastructure/repositories/admin"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -13,14 +13,14 @@ import (
 //
 //	@Summary
 //	@Description	Get Logged user profile
-//	@Tags			user
+//	@Tags			admin
 //	@Produce		json
 //
 // @Security     BearerAuth
 //
 //	@Success		200		{object}	GetUserResponse
 //	@Failure		404		{object}	map[string]string
-//	@Router			/api/user/profile [get]
+//	@Router			/api/admin/profile [get]
 func Profile(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		userToken := c.Locals("user").(*jwt.Token)

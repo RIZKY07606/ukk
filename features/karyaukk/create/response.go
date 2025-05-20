@@ -1,12 +1,18 @@
 package create
 
-import "github.com/google/uuid"
+type CreateKaryaUKKResponse struct {
+	KaryaID    string `json:"karya_id"`
+	Judul      string `json:"judul"`
+	Deskripsi  string `json:"deskripsi,omitempty"`
+	Thumbnail  string `json:"thumbnail,omitempty"`
+	Link       string `json:"link,omitempty"`
+	SiswaID    string `json:"siswa_id"`
+	KategoriID string `json:"kategori_id"`
+	AdminID    string `json:"admin_id"`
+}
 
-type Response struct {
-	ID         uuid.UUID `json:"karya_id"`
-	Judul      string    `json:"judul"`
-	Deskripsi  string    `json:"deskripsi,omitempty"`
-	Link       string    `json:"link,omitempty"`
-	SiswaID    uuid.UUID `json:"siswa_id"`
-	KategoriID uuid.UUID `json:"kategori_id"`
+type CreateKaryaUKKResponseWrapper struct {
+	Code    int                    `json:"code"`
+	Message string                 `json:"message"`
+	Data    CreateKaryaUKKResponse `json:"data"`
 }

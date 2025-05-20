@@ -1,7 +1,7 @@
 package getbyid
 
 import (
-	"net/http"
+	"time"
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,41 +9,35 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-//
-//	@Summary		Ambil Review by ID
-//	@Description	Mengambil satu data review berdasarkan ID
-//	@Tags			review
-//	@Produce		json
-//	@Param			id	path		string	true	"Review ID"
-//	@Success		200	{object}	Response
-//	@Failure		400	{object}	ErrorResponse
-//	@Failure		404	{object}	ErrorResponse
-//	@Router			/api/review/{id} [get]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+// GetReviewByID godoc
+// @Summary     Get review by ID
+// @Description Ambil detail review berdasarkan ID
+// @Tags        review
+// @Produce     json
+// @Param       id path string true "Review ID"
+// @Success     200 {object} GetReviewByIDResponseWrapper
+// @Failure     400 {object} map[string]string
+// @Failure     404 {object} map[string]string
+// @Router      /api/review/{id} [get]
+func GetReviewByID(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		reviewID, err := uuid.Parse(id)
+		idStr := c.Params("id")
+		id, err := uuid.Parse(idStr)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
-
-		var review entities.Review
-		if err := db.First(&review, "id = ?", reviewID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Review tidak ditemukan"})
+		var rev entities.Review
+		if err := db.First(&rev, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "Review tidak ditemukan"})
 		}
-
-		return c.JSON(Response{
-			ID:       review.ID,
-			Komentar: review.Komentar,
-			Rating:   review.Rating,
-			KaryaID:  review.KaryaID,
-			UserID:   review.UserID,
-		})
+		data := ReviewDetailResponse{
+			ReviewID:  rev.ID.String(),
+			Komentar:  rev.Komentar,
+			Rating:    rev.Rating,
+			KaryaID:   rev.KaryaID.String(),
+			CreatedAt: rev.CreatedAt.Format(time.RFC3339),
+			UpdatedAt: rev.UpdatedAt.Format(time.RFC3339),
+		}
+		return c.JSON(GetReviewByIDResponseWrapper{Code: 200, Message: "Success", Data: data})
 	}
 }

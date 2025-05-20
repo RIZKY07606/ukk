@@ -1,44 +1,38 @@
 package getall
 
 import (
+	"time"
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-//
-//	@Summary		Ambil Semua Review
-//	@Description	Mengambil semua review yang ada di database
-//	@Tags			review
-//	@Produce		json
-//	@Success		200	{array}		Response
-//	@Failure		500	{object}	ErrorResponse
-//	@Router			/api/review [get]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+// GetAllReview godoc
+// @Summary     Get all reviews
+// @Description Ambil semua review
+// @Tags        review
+// @Produce     json
+// @Success     200 {object} GetAllReviewResponseWrapper
+// @Failure     500 {object} map[string]string
+// @Router      /api/review [get]
+func GetAllReview(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var reviews []entities.Review
-		if err := db.Find(&reviews).Error; err != nil {
+		var list []entities.Review
+		if err := db.Find(&list).Error; err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": "Gagal mengambil data review"})
 		}
-
-		var responses []Response
-		for _, review := range reviews {
-			responses = append(responses, Response{
-				ID:       review.ID,
-				Komentar: review.Komentar,
-				Rating:   review.Rating,
-				KaryaID:  review.KaryaID,
-				UserID:   review.UserID,
+		var resp []ReviewResponse
+		for _, rev := range list {
+			resp = append(resp, ReviewResponse{
+				ReviewID:  rev.ID.String(),
+				Komentar:  rev.Komentar,
+				Rating:    rev.Rating,
+				KaryaID:   rev.KaryaID.String(),
+				CreatedAt: rev.CreatedAt.Format(time.RFC3339),
+				UpdatedAt: rev.UpdatedAt.Format(time.RFC3339),
 			})
 		}
-
-		return c.JSON(responses)
+		return c.JSON(GetAllReviewResponseWrapper{Code: 200, Message: "Success", Data: resp})
 	}
 }

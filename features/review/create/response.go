@@ -1,11 +1,15 @@
 package create
 
-import "github.com/google/uuid"
+type CreateReviewResponse struct {
+	ReviewID  string `json:"review_id"`
+	Komentar  string `json:"komentar"`
+	Rating    int    `json:"rating"`
+	KaryaID   string `json:"karya_id"`
+	CreatedAt string `json:"created_at"`
+}
 
-type Response struct {
-	ID       uuid.UUID `json:"review_id"`
-	Komentar string    `json:"komentar"`
-	Rating   int       `json:"rating"`
-	KaryaID  uuid.UUID `json:"karya_id"`
-	UserID   uuid.UUID `json:"user_id"`
+type CreateReviewResponseWrapper struct {
+	Code    int                  `json:"code"`
+	Message string               `json:"message"`
+	Data    CreateReviewResponse `json:"data"`
 }

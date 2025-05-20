@@ -6,7 +6,7 @@ import (
 	"time"
 
 	e "ukk-smkn2/entities"
-	r "ukk-smkn2/infrastructure/repositories/user"
+	r "ukk-smkn2/infrastructure/repositories/admin"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -18,18 +18,18 @@ var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-
 // Register godoc
 //
 //	@Summary
-//	@Description	Register a new user
-//	@Tags			user
+//	@Description	Register a new admin
+//	@Tags			admin
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		CreateUserRequest	true	"Create user request body"
-//	@Success		200		{object}	CreateUserResponseWrapper
+//	@Param			request	body		CreateAdminRequest	true	"Create admin request body"
+//	@Success		200		{object}	CreateAdminResponseWrapper
 //	@Failure		400		{object}	map[string]string
 //	@Failure		500		{object}	map[string]string
-//	@Router			/api/user/register [post]
+//	@Router			/api/admin/register [post]
 func Register(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req CreateUserRequest
+		var req CreateAdminRequest
 		if err := c.BodyParser(&req); err != nil {
 			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
@@ -47,18 +47,17 @@ func Register(db *gorm.DB) fiber.Handler {
 		}
 
 		hashedPassword, _ := r.HashPassword(req.Password)
-		user := e.User{
+		admin := e.Admin{
 			ID:        uuid.New(),
 			Nama:      req.Nama,
-			Email:     req.Email,
 			Password:  hashedPassword,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
 
-		if err := r.CreateUser(db, &user); err != nil {
+		if err := r.CreateAdmin(db, &admin); err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": "Email already exist"})
 		}
-		return c.JSON(e.SuccessResponse(&CreateUserResponse{Nama: user.Nama, Email: user.Email}))
+		return c.JSON(e.SuccessResponse(&CreateAdminResponse{Nama: admin.Nama, Email: admin.Email}))
 	}
 }

@@ -5,8 +5,8 @@ import (
 	"ukk-smkn2/docs"
 	"ukk-smkn2/routes"
 
-	// e "ukk-smkn2/entities"
 	"os"
+	e "ukk-smkn2/entities"
 
 	_ "ukk-smkn2/docs" // for Swagger docs
 
@@ -15,9 +15,9 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-//	@title			your own API application
+//	@title			API UKK SMKN2 SURABAYA DOCUMENTATION
 //	@version		1.0
-//	@description	Restful API using go fiber
+//	@description	Documentation for API UKK SMKN2 Surabaya
 //	@host			127.0.0.1:8080
 //	@BasePath		/
 
@@ -39,6 +39,12 @@ func main() {
 	db := database.DB
 	// db.AutoMigrate(&e.User{}) //migrate later
 	// db.AutoMigrate(&e.User{}, &e.otherEntities{})
+	db.AutoMigrate(&e.Admin{})
+	db.AutoMigrate(&e.Siswa{})
+	db.AutoMigrate(&e.KategoriKarya{})
+	db.AutoMigrate(&e.KaryaUKK{})
+	db.AutoMigrate(&e.FileUpload{})
+	db.AutoMigrate(&e.Review{})
 	routes.SetupRoutes(app, db)
 	app.Get("/swagger/*", swagger.HandlerDefault)
 

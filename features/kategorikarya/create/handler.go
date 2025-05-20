@@ -9,32 +9,27 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
+// CreateKategoriKarya godoc
 //
-//	@Summary		Buat Kategori Karya
-//	@Description	Endpoint untuk membuat kategori karya baru
+//	@Summary		Create kategori karya
+//	@Description	Create a new kategori karya
 //	@Tags			kategori_karya
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		Request	true	"Data kategori karya"
-//	@Success		200		{object}	Response
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Param			request	body		CreateKategoriKaryaRequest	true	"Kategori Karya body"
+//	@Success		200		{object}	CreateKategoriKaryaResponseWrapper
+//	@Failure		400		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
 //	@Router			/api/kategori-karya [post]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+func CreateKategoriKarya(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req Request
+		var req CreateKategoriKaryaRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "Request body invalid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
 
 		if req.Nama == "" {
-			return c.Status(400).JSON(fiber.Map{"error": "Nama kategori wajib diisi"})
+			return c.Status(400).JSON(fiber.Map{"error": "Nama is required"})
 		}
 
 		kategori := entities.KategoriKarya{
@@ -45,12 +40,16 @@ func Handler(db *gorm.DB) fiber.Handler {
 		}
 
 		if err := db.Create(&kategori).Error; err != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal membuat kategori karya"})
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to create kategori karya"})
 		}
 
-		return c.JSON(Response{
-			ID:   kategori.ID,
-			Nama: kategori.Nama,
+		return c.JSON(CreateKategoriKaryaResponseWrapper{
+			Code:    200,
+			Message: "Kategori karya created successfully",
+			Data: CreateKategoriKaryaResponse{
+				KategoriID: kategori.ID.String(),
+				Nama:       kategori.Nama,
+			},
 		})
 	}
 }

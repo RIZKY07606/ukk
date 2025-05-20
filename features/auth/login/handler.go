@@ -14,7 +14,7 @@ import (
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		AuthRequest	true	"Create user request body"
+//	@Param			request	body		AuthRequest	true	"Create admin request body"
 //	@Success		200		{object}	AuthResponse
 //	@Failure		400		{object}	map[string]string
 //	@Failure		500		{object}	map[string]string
@@ -26,16 +26,16 @@ func Login(db *gorm.DB) fiber.Handler {
 			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
 
-		user, err := r.FindUserByEmail(db, req.Email)
+		admin, err := r.FindUserByEmail(db, req.Email)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": "Internal server error"})
 		}
 
-		if user == nil || !r.CheckPasswordHash(req.Password, user.Password) {
+		if admin == nil || !r.CheckPasswordHash(req.Password, admin.Password) {
 			return c.Status(400).JSON(fiber.Map{"error": "Invalid credentials"})
 		}
 
-		token, _ := r.GenerateJWT(user.ID)
+		token, _ := r.GenerateJWT(admin.ID)
 		return c.JSON(AuthResponse{Token: token})
 	}
 }

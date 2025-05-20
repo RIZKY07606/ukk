@@ -9,56 +9,66 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error" example:"Deskripsi error"`
-}
-
-// Handler godoc
-// @Summary      Create a new KaryaUKK
-// @Description  Membuat karya UKK baru dengan judul, deskripsi, link, siswa, dan kategori
-// @Tags         KaryaUKK
-// @Accept       json
-// @Produce      json
-// @Param        request  body      Request  true  "Request body untuk membuat karya UKK"
-// @Success      200      {object}  Response
-// @Failure      400      {object}  ErrorResponse
-// @Failure      500      {object}  ErrorResponse
-// @Router       /api/karyaukk [post]
-func Handler(db *gorm.DB) fiber.Handler {
+// CreateKaryaUKK godoc
+//
+//	@Summary		Create karya UKK
+//	@Description	Create a new karya UKK
+//	@Tags			karya_ukk
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		CreateKaryaUKKRequest	true	"KaryaUKK body"
+//	@Success		200		{object}	CreateKaryaUKKResponseWrapper
+//	@Failure		400		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
+//	@Router			/api/karya-ukk [post]
+func CreateKaryaUKK(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req Request
+		var req CreateKaryaUKKRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "Request body invalid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+		}
+		// validasi minimal: Judul, SiswaID, KategoriID, AdminID
+		if req.Judul == "" || req.SiswaID == "" || req.KategoriID == "" || req.AdminID == "" {
+			return c.Status(400).JSON(fiber.Map{"error": "Judul, SiswaID, KategoriID, dan AdminID wajib diisi"})
 		}
 
-		if req.Judul == "" {
-			return c.Status(400).JSON(fiber.Map{"error": "Judul wajib diisi"})
+		idSiswa, err1 := uuid.Parse(req.SiswaID)
+		idKategori, err2 := uuid.Parse(req.KategoriID)
+		idAdmin, err3 := uuid.Parse(req.AdminID)
+		if err1 != nil || err2 != nil || err3 != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Format UUID tidak valid"})
 		}
-
-		// Optional: kamu bisa tambah cek apakah SiswaID dan KategoriID ada di database
 
 		karya := entities.KaryaUKK{
 			ID:         uuid.New(),
 			Judul:      req.Judul,
 			Deskripsi:  req.Deskripsi,
+			Thumbnail:  req.Thumbnail,
 			Link:       req.Link,
-			SiswaID:    req.SiswaID,
-			KategoriID: req.KategoriID,
+			SiswaID:    idSiswa,
+			KategoriID: idKategori,
+			AdminID:    idAdmin,
 			CreatedAt:  time.Now(),
 			UpdatedAt:  time.Now(),
 		}
 
 		if err := db.Create(&karya).Error; err != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal membuat karya"})
+			return c.Status(500).JSON(fiber.Map{"error": "Gagal membuat karya UKK"})
 		}
 
-		return c.JSON(Response{
-			ID:         karya.ID,
-			Judul:      karya.Judul,
-			Deskripsi:  karya.Deskripsi,
-			Link:       karya.Link,
-			SiswaID:    karya.SiswaID,
-			KategoriID: karya.KategoriID,
+		return c.JSON(CreateKaryaUKKResponseWrapper{
+			Code:    200,
+			Message: "Karya UKK created successfully",
+			Data: CreateKaryaUKKResponse{
+				KaryaID:    karya.ID.String(),
+				Judul:      karya.Judul,
+				Deskripsi:  karya.Deskripsi,
+				Thumbnail:  karya.Thumbnail,
+				Link:       karya.Link,
+				SiswaID:    karya.SiswaID.String(),
+				KategoriID: karya.KategoriID.String(),
+				AdminID:    karya.AdminID.String(),
+			},
 		})
 	}
 }

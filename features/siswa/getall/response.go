@@ -1,14 +1,15 @@
 package getall
 
-import (
-	"github.com/google/uuid"
-)
+type GetAllSiswaResponse struct {
+	SiswaID string `json:"siswa_id"`
+	NIS     string `json:"nis"`
+	Nama    string `json:"nama"`
+	Kelas   string `json:"kelas"`
+	Jurusan string `json:"jurusan"`
+}
 
-type Response struct {
-	ID      uuid.UUID `json:"siswa_id"`
-	NIS     string    `json:"nis"`
-	Nama    string    `json:"nama"`
-	Kelas   string    `json:"kelas"`
-	Jurusan string    `json:"jurusan"`
-	UserID  uuid.UUID `json:"user_id"`
+type GetAllSiswaResponseWrapper struct {
+	Code    int                   `json:"code"`
+	Message string                `json:"message"`
+	Data    []GetAllSiswaResponse `json:"data"`
 }

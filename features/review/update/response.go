@@ -1,11 +1,13 @@
 package update
 
-import "github.com/google/uuid"
+type UpdateReviewResponse struct {
+	ID       string `json:"id"`
+	Komentar string `json:"komentar"`
+	Rating   int    `json:"rating"`
+}
 
-type Response struct {
-	ID       uuid.UUID `json:"review_id"`
-	Komentar string    `json:"komentar"`
-	Rating   int       `json:"rating"`
-	KaryaID  uuid.UUID `json:"karya_id"`
-	UserID   uuid.UUID `json:"user_id"`
+type UpdateReviewResponseWrapper struct {
+	Code    int                  `json:"code"`
+	Message string               `json:"message"`
+	Data    UpdateReviewResponse `json:"data"`
 }

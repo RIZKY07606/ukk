@@ -1,7 +1,6 @@
 package getbyid
 
 import (
-	"net/http"
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,38 +8,38 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
+// GetKategoriKaryaByID godoc
 //
-//	@Summary		Ambil kategori karya berdasarkan ID
-//	@Description	Mengembalikan detail kategori karya berdasarkan UUID
+//	@Summary		Get kategori karya by ID
+//	@Description	Get kategori karya detail by ID
 //	@Tags			kategori_karya
+//	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string	true	"Kategori ID"
-//	@Success		200	{object}	Response
-//	@Failure		400	{object}	ErrorResponse
-//	@Failure		404	{object}	ErrorResponse
+//	@Param			id		path		string	true	"Kategori ID"
+//	@Success		200		{object}	GetKategoriKaryaByIDResponseWrapper
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
 //	@Router			/api/kategori-karya/{id} [get]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+func GetKategoriKaryaByID(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		kategoriID, err := uuid.Parse(id)
+		idParam := c.Params("id")
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid kategori ID"})
 		}
 
 		var kategori entities.KategoriKarya
-		if err := db.First(&kategori, "id = ?", kategoriID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Kategori karya tidak ditemukan"})
+		if err := db.First(&kategori, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "Kategori karya not found"})
 		}
 
-		return c.JSON(Response{
-			ID:   kategori.ID,
-			Nama: kategori.Nama,
+		return c.JSON(GetKategoriKaryaByIDResponseWrapper{
+			Code:    200,
+			Message: "Success",
+			Data: GetKategoriKaryaByIDResponse{
+				KategoriID: kategori.ID.String(),
+				Nama:       kategori.Nama,
+			},
 		})
 	}
 }

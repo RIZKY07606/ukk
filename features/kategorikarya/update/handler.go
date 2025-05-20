@@ -1,7 +1,6 @@
 package update
 
 import (
-	"net/http"
 	"time"
 	"ukk-smkn2/entities"
 
@@ -10,57 +9,56 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
+// UpdateKategoriKarya godoc
 //
 //	@Summary		Update kategori karya
-//	@Description	Mengubah nama kategori karya berdasarkan ID
+//	@Description	Update kategori karya by ID
 //	@Tags			kategori_karya
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string			true	"Kategori ID"
-//	@Param			request	body		Request			true	"Request Body"
-//	@Success		200		{object}	Response
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Param			id		path		string					true	"Kategori ID"
+//	@Param			request	body		UpdateKategoriKaryaRequest	true	"Update kategori karya body"
+//	@Success		200		{object}	UpdateKategoriKaryaResponseWrapper
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
 //	@Router			/api/kategori-karya/{id} [put]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+func UpdateKategoriKarya(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		kategoriID, err := uuid.Parse(id)
+		idParam := c.Params("id")
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid kategori ID"})
 		}
 
-		var req Request
+		var req UpdateKategoriKaryaRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Request body invalid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
 
 		if req.Nama == "" {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Nama kategori wajib diisi"})
+			return c.Status(400).JSON(fiber.Map{"error": "Nama is required"})
 		}
 
 		var kategori entities.KategoriKarya
-		if err := db.First(&kategori, "id = ?", kategoriID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Kategori karya tidak ditemukan"})
+		if err := db.First(&kategori, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "Kategori karya not found"})
 		}
 
 		kategori.Nama = req.Nama
 		kategori.UpdatedAt = time.Now()
 
 		if err := db.Save(&kategori).Error; err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Gagal mengupdate kategori karya"})
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to update kategori karya"})
 		}
 
-		return c.JSON(Response{
-			ID:   kategori.ID,
-			Nama: kategori.Nama,
+		return c.JSON(UpdateKategoriKaryaResponseWrapper{
+			Code:    200,
+			Message: "Kategori karya updated successfully",
+			Data: UpdateKategoriKaryaResponse{
+				KategoriID: kategori.ID.String(),
+				Nama:       kategori.Nama,
+			},
 		})
 	}
 }

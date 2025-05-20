@@ -1,8 +1,8 @@
 package update
 
 import (
-	"net/http"
 	"time"
+
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,66 +10,63 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-// @Summary      Update FileUpload by ID
-// @Description  Mengupdate data FileUpload berdasarkan ID
-// @Tags         FileUpload
-// @Accept       json
-// @Produce      json
-// @Param        id    path      string  true  "FileUpload ID (UUID)"
-// @Param        body  body      Request true  "Data file yang diupdate"
-// @Success      200   {object}  Response
-// @Failure      400   {object}  ErrorResponse
-// @Failure      404   {object}  ErrorResponse
-// @Failure      500   {object}  ErrorResponse
-// @Router       /api/fileupload/{id} [put]
-func Handler(db *gorm.DB) fiber.Handler {
+// UpdateFileUpload godoc
+// @Summary     Update file upload
+// @Description Update nama, tipe, dan URL FileUpload
+// @Tags        file_upload
+// @Accept      json
+// @Produce     json
+// @Param       id path string true "FileUpload ID"
+// @Param       request body UpdateFileUploadRequest true "Update body"
+// @Success     200 {object} UpdateFileUploadResponseWrapper
+// @Failure     400 {object} map[string]string
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /api/file-upload/{id} [put]
+func UpdateFileUpload(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		fileID, err := uuid.Parse(id)
+		idStr := c.Params("id")
+		id, err := uuid.Parse(idStr)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
 
-		var req Request
+		var req UpdateFileUploadRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Request body invalid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+		}
+		if req.Nama == "" || req.URL == "" {
+			return c.Status(400).JSON(fiber.Map{"error": "Nama dan URL wajib diisi"})
 		}
 
-		if req.Nama == "" || req.KaryaID == "" {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Nama dan KaryaID harus diisi"})
+		var f entities.FileUpload
+		if err := db.First(&f, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "FileUpload tidak ditemukan"})
 		}
 
-		karyaUUID, err := uuid.Parse(req.KaryaID)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "KaryaID tidak valid"})
+		f.Nama = req.Nama
+		f.Tipe = req.Tipe
+		f.URL = req.URL
+		f.UpdatedAt = time.Now()
+
+		if err := db.Save(&f).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Gagal update file upload"})
 		}
 
-		var file entities.FileUpload
-		if err := db.First(&file, "id = ?", fileID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "File tidak ditemukan"})
+		// Build response data
+		data := UpdateFileUploadResponse{
+			FileID:    f.ID.String(),
+			Nama:      f.Nama,
+			Tipe:      f.Tipe,
+			URL:       f.URL,
+			KaryaID:   f.KaryaID.String(),
+			UpdatedAt: f.UpdatedAt.Format(time.RFC3339),
 		}
 
-		file.Nama = req.Nama
-		file.Tipe = req.Tipe
-		file.URL = req.URL
-		file.KaryaID = karyaUUID
-		file.UpdatedAt = time.Now()
-
-		if err := db.Save(&file).Error; err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Gagal mengupdate file"})
-		}
-
-		return c.JSON(Response{
-			ID:      file.ID,
-			Nama:    file.Nama,
-			Tipe:    file.Tipe,
-			URL:     file.URL,
-			KaryaID: file.KaryaID,
+		return c.JSON(UpdateFileUploadResponseWrapper{
+			Code:    200,
+			Message: "FileUpload berhasil diupdate",
+			Data:    data,
 		})
 	}
 }

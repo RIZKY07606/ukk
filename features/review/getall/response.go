@@ -1,11 +1,16 @@
 package getall
 
-import "github.com/google/uuid"
+type ReviewResponse struct {
+	ReviewID  string `json:"review_id"`
+	Komentar  string `json:"komentar"`
+	Rating    int    `json:"rating"`
+	KaryaID   string `json:"karya_id"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
 
-type Response struct {
-	ID       uuid.UUID `json:"review_id"`
-	Komentar string    `json:"komentar"`
-	Rating   int       `json:"rating"`
-	KaryaID  uuid.UUID `json:"karya_id"`
-	UserID   uuid.UUID `json:"user_id"`
+type GetAllReviewResponseWrapper struct {
+	Code    int              `json:"code"`
+	Message string           `json:"message"`
+	Data    []ReviewResponse `json:"data"`
 }

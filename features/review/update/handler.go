@@ -1,8 +1,8 @@
 package update
 
 import (
-	"net/http"
 	"time"
+
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,73 +10,57 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-//
-//	@Summary		Update Review by ID
-//	@Description	Mengupdate data review berdasarkan ID
-//	@Tags			review
-//	@Accept			json
-//	@Produce		json
-//	@Param			id		path		string		true	"Review ID"
-//	@Param			body	body		Request		true	"Data review yang akan diupdate"
-//	@Success		200		{object}	Response
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
-//	@Router			/api/review/{id} [put]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+// UpdateReview godoc
+// @Summary     Update review
+// @Description Update komentar & rating review
+// @Tags        review
+// @Accept      json
+// @Produce     json
+// @Param       id path string true "Review ID"
+// @Param       request body UpdateReviewRequest true "Body update review"
+// @Success     200 {object} UpdateReviewResponseWrapper
+// @Failure     400 {object} map[string]string
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /api/review/{id} [put]
+func UpdateReview(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		reviewID, err := uuid.Parse(id)
+		idStr := c.Params("id")
+		id, err := uuid.Parse(idStr)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
 
-		var req Request
+		var req UpdateReviewRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Request body invalid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
 
-		if req.Komentar == "" || req.Rating < 1 || req.Rating > 5 || req.KaryaID == "" || req.UserID == "" {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Field tidak valid atau kosong"})
+		if req.Komentar == "" || req.Rating < 1 || req.Rating > 5 {
+			return c.Status(400).JSON(fiber.Map{"error": "Komentar & rating (1–5) wajib diisi"})
 		}
 
-		karyaUUID, err := uuid.Parse(req.KaryaID)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "KaryaID tidak valid"})
+		var rev entities.Review
+		if err := db.First(&rev, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "Review tidak ditemukan"})
 		}
 
-		userUUID, err := uuid.Parse(req.UserID)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "UserID tidak valid"})
+		rev.Komentar = req.Komentar
+		rev.Rating = req.Rating
+		rev.UpdatedAt = time.Now()
+
+		if err := db.Save(&rev).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Gagal update review"})
 		}
 
-		var review entities.Review
-		if err := db.First(&review, "id = ?", reviewID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Review tidak ditemukan"})
-		}
-
-		review.Komentar = req.Komentar
-		review.Rating = req.Rating
-		review.KaryaID = karyaUUID
-		review.UserID = userUUID
-		review.UpdatedAt = time.Now()
-
-		if err := db.Save(&review).Error; err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Gagal mengupdate review"})
-		}
-
-		return c.JSON(Response{
-			ID:       review.ID,
-			Komentar: review.Komentar,
-			Rating:   review.Rating,
-			KaryaID:  review.KaryaID,
-			UserID:   review.UserID,
+		return c.JSON(UpdateReviewResponseWrapper{
+			Code:    200,
+			Message: "Review berhasil diupdate",
+			Data: UpdateReviewResponse{
+				ID:       rev.ID.String(),
+				Komentar: rev.Komentar,
+				Rating:   rev.Rating,
+			},
 		})
 	}
 }

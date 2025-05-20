@@ -15,9 +15,9 @@ func CheckPasswordHash(password, hash string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
 }
 
-func GenerateJWT(userID uuid.UUID) (string, error) {
+func GenerateJWT(adminID uuid.UUID) (string, error) {
 	claims := jwt.MapClaims{
-		"sub": userID,
+		"sub": adminID,
 		"exp": time.Now().Add(time.Hour * 72).Unix(),
 	}
 
@@ -25,14 +25,14 @@ func GenerateJWT(userID uuid.UUID) (string, error) {
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
 
-func FindUserByEmail(db *gorm.DB, email string) (*e.User, error) {
-	var user e.User
-	result := db.Raw("SELECT * FROM users WHERE email = ? LIMIT 1", email).Scan(&user)
+func FindUserByEmail(db *gorm.DB, email string) (*e.Admin, error) {
+	var admin e.Admin
+	result := db.Raw("SELECT * FROM admins WHERE email = ? LIMIT 1", email).Scan(&admin)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	if result.RowsAffected == 0 {
 		return nil, nil
 	}
-	return &user, nil
+	return &admin, nil
 }

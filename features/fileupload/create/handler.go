@@ -9,57 +9,51 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-// @Summary      Create FileUpload
-// @Description  Membuat data file upload baru
-// @Tags         FileUpload
-// @Accept       json
-// @Produce      json
-// @Param        data  body      Request  true  "Data file upload"
-// @Success      200   {object}  Response
-// @Failure      400   {object}  ErrorResponse
-// @Failure      500   {object}  ErrorResponse
-// @Router       /api/fileupload [post]
-func Handler(db *gorm.DB) fiber.Handler {
+// CreateFileUpload godoc
+// @Summary     Create a new file upload
+// @Description Create a new FileUpload untuk karya UKK
+// @Tags        file_upload
+// @Accept      json
+// @Produce     json
+// @Param       request body CreateFileUploadRequest true "FileUpload body"
+// @Success     200 {object} CreateFileUploadResponseWrapper
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /api/file-upload [post]
+func CreateFileUpload(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req Request
+		var req CreateFileUploadRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 		}
-
-		if req.Nama == "" || req.KaryaID == "" {
-			return c.Status(400).JSON(fiber.Map{"error": "Nama dan KaryaID harus diisi"})
+		if req.Nama == "" || req.URL == "" || req.KaryaID == "" {
+			return c.Status(400).JSON(fiber.Map{"error": "Nama, URL, dan karya_id wajib diisi"})
 		}
-
-		karyaUUID, err := uuid.Parse(req.KaryaID)
+		fileID := uuid.New()
+		karyaID, err := uuid.Parse(req.KaryaID)
 		if err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "KaryaID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid karya_id UUID"})
 		}
-
-		fileUpload := entities.FileUpload{
-			ID:        uuid.New(),
+		f := entities.FileUpload{
+			ID:        fileID,
 			Nama:      req.Nama,
 			Tipe:      req.Tipe,
 			URL:       req.URL,
-			KaryaID:   karyaUUID,
+			KaryaID:   karyaID,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-
-		if err := db.Create(&fileUpload).Error; err != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal menyimpan file"})
+		if err := db.Create(&f).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Gagal membuat file upload"})
 		}
-
-		return c.JSON(Response{
-			ID:      fileUpload.ID,
-			Nama:    fileUpload.Nama,
-			Tipe:    fileUpload.Tipe,
-			URL:     fileUpload.URL,
-			KaryaID: fileUpload.KaryaID,
-		})
+		res := CreateFileUploadResponse{
+			FileID:    f.ID.String(),
+			Nama:      f.Nama,
+			Tipe:      f.Tipe,
+			URL:       f.URL,
+			KaryaID:   f.KaryaID.String(),
+			CreatedAt: f.CreatedAt.Format(time.RFC3339),
+		}
+		return c.JSON(CreateFileUploadResponseWrapper{Code: 200, Message: "FileUpload berhasil dibuat", Data: res})
 	}
 }

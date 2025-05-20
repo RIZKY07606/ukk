@@ -9,64 +9,52 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler godoc
-//
-//	@Summary		Buat review baru
-//	@Description	Membuat data review untuk karya tertentu
-//	@Tags			review
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		Request	true	"Request body review"
-//	@Success		200		{object}	Response
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
-//	@Router			/api/review [post]
-//	@Security		BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+// CreateReview godoc
+// @Summary     Create a new review
+// @Description Create a new review untuk karya UKK
+// @Tags        review
+// @Accept      json
+// @Produce     json
+// @Param       request body CreateReviewRequest true "Review body"
+// @Success     200 {object} CreateReviewResponseWrapper
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /api/review [post]
+func CreateReview(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req Request
+		var req CreateReviewRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "Request body invalid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+		}
+		if req.Komentar == "" || req.Rating < 1 || req.Rating > 5 || req.KaryaID == "" {
+			return c.Status(400).JSON(fiber.Map{"error": "Komentar, rating (1–5), dan karya_id wajib diisi"})
 		}
 
-		if req.Komentar == "" || req.Rating < 1 || req.Rating > 5 || req.KaryaID == "" || req.UserID == "" {
-			return c.Status(400).JSON(fiber.Map{"error": "Field tidak valid atau kosong"})
-		}
-
-		karyaUUID, err := uuid.Parse(req.KaryaID)
-		if err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "KaryaID tidak valid"})
-		}
-
-		userUUID, err := uuid.Parse(req.UserID)
-		if err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "UserID tidak valid"})
-		}
-
-		review := entities.Review{
+		rev := entities.Review{
 			ID:        uuid.New(),
 			Komentar:  req.Komentar,
 			Rating:    req.Rating,
-			KaryaID:   karyaUUID,
-			UserID:    userUUID,
+			KaryaID:   mustParseUUID(req.KaryaID),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-
-		if err := db.Create(&review).Error; err != nil {
+		if err := db.Create(&rev).Error; err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": "Gagal membuat review"})
 		}
 
-		return c.JSON(Response{
-			ID:       review.ID,
-			Komentar: review.Komentar,
-			Rating:   review.Rating,
-			KaryaID:  review.KaryaID,
-			UserID:   review.UserID,
-		})
+		res := CreateReviewResponse{
+			ReviewID:  rev.ID.String(),
+			Komentar:  rev.Komentar,
+			Rating:    rev.Rating,
+			KaryaID:   rev.KaryaID.String(),
+			CreatedAt: rev.CreatedAt.Format(time.RFC3339),
+		}
+		return c.JSON(CreateReviewResponseWrapper{Code: 200, Message: "Review berhasil dibuat", Data: res})
 	}
+}
+
+// helper untuk parsing UUID
+func mustParseUUID(s string) uuid.UUID {
+	id, _ := uuid.Parse(s)
+	return id
 }

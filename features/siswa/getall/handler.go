@@ -7,38 +7,38 @@ import (
 	"gorm.io/gorm"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler retrieves all siswa records
+// GetAllSiswa godoc
 //
-// @Summary      Get All Siswa
-// @Description  Mengambil semua data siswa
-// @Tags         siswa
-// @Produce      json
-// @Success      200  {array}   Response
-// @Failure      500  {object}  ErrorResponse
-// @Router       /api/siswa [get]
-func Handler(db *gorm.DB) fiber.Handler {
+//	@Summary		Get all siswa
+//	@Description	Get list of all siswa
+//	@Tags			siswa
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	GetAllSiswaResponseWrapper
+//	@Failure		500	{object}	map[string]string
+//	@Router			/api/siswa [get]
+func GetAllSiswa(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var siswas []entities.Siswa
-		if err := db.Find(&siswas).Error; err != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal mengambil data siswa"})
+		var siswaList []entities.Siswa
+		if err := db.Find(&siswaList).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch siswa"})
 		}
 
-		var responses []Response
-		for _, siswa := range siswas {
-			responses = append(responses, Response{
-				ID:      siswa.ID,
-				NIS:     siswa.NIS,
-				Nama:    siswa.Nama,
-				Kelas:   siswa.Kelas,
-				Jurusan: siswa.Jurusan,
-				UserID:  siswa.UserID,
+		var responseData []GetAllSiswaResponse
+		for _, s := range siswaList {
+			responseData = append(responseData, GetAllSiswaResponse{
+				SiswaID: s.ID.String(),
+				NIS:     s.NIS,
+				Nama:    s.Nama,
+				Kelas:   s.Kelas,
+				Jurusan: s.Jurusan,
 			})
 		}
 
-		return c.JSON(responses)
+		return c.JSON(GetAllSiswaResponseWrapper{
+			Code:    200,
+			Message: "Success",
+			Data:    responseData,
+		})
 	}
 }

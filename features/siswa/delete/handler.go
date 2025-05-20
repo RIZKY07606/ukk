@@ -4,45 +4,35 @@ import (
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type MessageResponse struct {
-	Message string `json:"message"`
-}
-
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// Handler deletes siswa by ID
+// DeleteSiswa godoc
 //
-// @Summary      Delete Siswa
-// @Description  Menghapus data siswa berdasarkan ID
-// @Tags         siswa
-// @Param        id   path      string  true  "Siswa ID"
-// @Produce      json
-// @Success      200  {object}  MessageResponse
-// @Failure      400  {object}  ErrorResponse
-// @Failure      404  {object}  ErrorResponse
-// @Failure      500  {object}  ErrorResponse
-// @Router       /api/siswa/{id} [delete]
-func Handler(db *gorm.DB) fiber.Handler {
+//	@Summary		Delete siswa
+//	@Description	Delete a siswa by ID
+//	@Tags			siswa
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"Siswa ID"
+//	@Success		200		{object}	map[string]string
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
+//	@Router			/api/siswa/{id} [delete]
+func DeleteSiswa(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		if id == "" {
-			return c.Status(400).JSON(fiber.Map{"error": "ID tidak boleh kosong"})
+		idParam := c.Params("id")
+		id, err := uuid.Parse(idParam)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid ID format"})
 		}
 
-		res := db.Delete(&entities.Siswa{}, "id = ?", id)
-		if res.Error != nil {
-			return c.Status(500).JSON(fiber.Map{"error": "Gagal menghapus siswa"})
+		if err := db.Delete(&entities.Siswa{}, "id = ?", id).Error; err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to delete siswa"})
 		}
 
-		if res.RowsAffected == 0 {
-			return c.Status(404).JSON(fiber.Map{"error": "Siswa tidak ditemukan"})
-		}
-
-		return c.JSON(fiber.Map{"message": "Siswa berhasil dihapus"})
+		return c.JSON(fiber.Map{"message": "Siswa deleted successfully"})
 	}
 }

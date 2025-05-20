@@ -2,7 +2,7 @@ package create
 
 // CreateUserRequestBody
 // @Description Create user request body
-type CreateUserRequest struct {
+type CreateAdminRequest struct {
 	// Your Name
 	Nama string `json:"nama"`
 	// Your Email

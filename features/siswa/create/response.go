@@ -1,14 +1,15 @@
 package create
 
-import (
-	"github.com/google/uuid"
-)
+type CreateSiswaResponse struct {
+	SiswaID string `json:"siswa_id"`
+	NIS     string `json:"nis"`
+	Nama    string `json:"nama"`
+	Kelas   string `json:"kelas"`
+	Jurusan string `json:"jurusan"`
+}
 
-type Response struct {
-	ID      uuid.UUID `json:"siswa_id"`
-	NIS     string    `json:"nis"`
-	Nama    string    `json:"nama"`
-	Kelas   string    `json:"kelas"`
-	Jurusan string    `json:"jurusan"`
-	UserID  uuid.UUID `json:"user_id"`
+type CreateSiswaResponseWrapper struct {
+	Code    int                 `json:"code"`
+	Message string              `json:"message"`
+	Data    CreateSiswaResponse `json:"data"`
 }

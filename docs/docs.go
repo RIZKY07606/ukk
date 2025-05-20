@@ -15,6 +15,90 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Logged user profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getprofile.GetUserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/register": {
+            "post": {
+                "description": "Register a new admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "parameters": [
+                    {
+                        "description": "Create admin request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateAdminResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "description": "Log In",
@@ -29,7 +113,7 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Create user request body",
+                        "description": "Create admin request body",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -66,93 +150,99 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/fileupload": {
+        "/api/file-upload": {
             "get": {
-                "description": "Mengambil semua data FileUpload",
+                "description": "Ambil semua FileUpload",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "FileUpload"
+                    "file_upload"
                 ],
-                "summary": "Get All FileUploads",
+                "summary": "Get all file uploads",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ukk-smkn2_features_fileupload_getall.Response"
+                            "$ref": "#/definitions/getall.GetAllFileUploadResponseWrapper"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new FileUpload untuk karya UKK",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file_upload"
+                ],
+                "summary": "Create a new file upload",
+                "parameters": [
+                    {
+                        "description": "FileUpload body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateFileUploadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateFileUploadResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getall.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Membuat data file upload baru",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "FileUpload"
-                ],
-                "summary": "Create FileUpload",
-                "parameters": [
-                    {
-                        "description": "Data file upload",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_create.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             }
         },
-        "/api/fileupload/{id}": {
+        "/api/file-upload/{id}": {
             "get": {
-                "description": "Mengambil data FileUpload berdasarkan ID",
+                "description": "Ambil detail FileUpload berdasarkan ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "FileUpload"
+                    "file_upload"
                 ],
-                "summary": "Get FileUpload by ID",
+                "summary": "Get file upload by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "FileUpload ID (UUID)",
+                        "description": "FileUpload ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -162,25 +252,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getbyid.Response"
+                            "$ref": "#/definitions/getbyid.GetFileUploadByIDResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getbyid.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_getbyid.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "put": {
-                "description": "Mengupdate data FileUpload berdasarkan ID",
+                "description": "Update nama, tipe, dan URL FileUpload",
                 "consumes": [
                     "application/json"
                 ],
@@ -188,24 +284,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "FileUpload"
+                    "file_upload"
                 ],
-                "summary": "Update FileUpload by ID",
+                "summary": "Update file upload",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "FileUpload ID (UUID)",
+                        "description": "FileUpload ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Data file yang diupdate",
-                        "name": "body",
+                        "description": "Update body",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.Request"
+                            "$ref": "#/definitions/update.UpdateFileUploadRequest"
                         }
                     }
                 ],
@@ -213,42 +309,51 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.Response"
+                            "$ref": "#/definitions/update.UpdateFileUploadResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Menghapus data FileUpload berdasarkan ID",
+                "description": "Hapus FileUpload berdasarkan ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "FileUpload"
+                    "file_upload"
                 ],
-                "summary": "Delete FileUpload by ID",
+                "summary": "Delete file upload",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "FileUpload ID (UUID)",
+                        "description": "FileUpload ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -258,25 +363,127 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.SuccessResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_fileupload_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/karya-ukk": {
+            "get": {
+                "description": "Get all karya UKK, filter optional by 'judul'",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "karya_ukk"
+                ],
+                "summary": "Get all karya UKK",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by judul",
+                        "name": "judul",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getall.GetAllKaryaUKKResponseWrapper"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new karya UKK",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "karya_ukk"
+                ],
+                "summary": "Create karya UKK",
+                "parameters": [
+                    {
+                        "description": "KaryaUKK body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateKaryaUKKRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/create.CreateKaryaUKKResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -284,12 +491,7 @@ const docTemplate = `{
         },
         "/api/karya-ukk/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Mengambil data Karya UKK berdasarkan ID",
+                "description": "Get detail karya UKK by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -297,13 +499,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "KaryaUKK"
+                    "karya_ukk"
                 ],
-                "summary": "Get Karya UKK by ID",
+                "summary": "Get karya UKK by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Karya UKK ID (UUID)",
+                        "description": "KaryaUKK ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -313,168 +515,111 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_getbyid.Response"
+                            "$ref": "#/definitions/getbyid.GetKaryaUKKByIDResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/getbyid.ResponseError"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/getbyid.ResponseError"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
-            }
-        },
-        "/api/karyaukk": {
-            "get": {
-                "description": "Mengambil semua data karya UKK",
+            },
+            "put": {
+                "description": "Update karya UKK by ID",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "KaryaUKK"
+                    "karya_ukk"
                 ],
-                "summary": "Get all KaryaUKK",
+                "summary": "Update karya UKK",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "KaryaUKK ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/update.UpdateKaryaUKKRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ukk-smkn2_features_karyaukk_getall.Response"
+                            "$ref": "#/definitions/update.UpdateKaryaUKKResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_getall.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Membuat karya UKK baru dengan judul, deskripsi, link, siswa, dan kategori",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "KaryaUKK"
-                ],
-                "summary": "Create a new KaryaUKK",
-                "parameters": [
-                    {
-                        "description": "Request body untuk membuat karya UKK",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_create.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/karyaukk/{id}": {
-            "put": {
-                "description": "Mengupdate karya UKK berdasarkan ID yang diberikan",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "KaryaUKK"
-                ],
-                "summary": "Update a KaryaUKK by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "KaryaUKK ID (UUID)",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Data karya UKK yang akan diupdate",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_update.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_update.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_update.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_update.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Menghapus karya UKK berdasarkan ID yang diberikan",
+                "description": "Delete karya UKK by ID",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "KaryaUKK"
+                    "karya_ukk"
                 ],
-                "summary": "Delete a KaryaUKK by ID",
+                "summary": "Delete karya UKK",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "KaryaUKK ID (UUID)",
+                        "description": "KaryaUKK ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -484,25 +629,35 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/delete.MessageResponse"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_karyaukk_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -510,44 +665,7 @@ const docTemplate = `{
         },
         "/api/kategori-karya": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Mengembalikan list semua kategori karya",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "kategori_karya"
-                ],
-                "summary": "Ambil semua kategori karya",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_getall.Response"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_getall.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Endpoint untuk membuat kategori karya baru",
+                "description": "Get all kategori karya, optional filter by name (query param 'nama')",
                 "consumes": [
                     "application/json"
                 ],
@@ -557,15 +675,53 @@ const docTemplate = `{
                 "tags": [
                     "kategori_karya"
                 ],
-                "summary": "Buat Kategori Karya",
+                "summary": "Get all kategori karya",
                 "parameters": [
                     {
-                        "description": "Data kategori karya",
-                        "name": "body",
+                        "type": "string",
+                        "description": "Filter by name",
+                        "name": "nama",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getall.GetAllKategoriKaryaResponseWrapper"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new kategori karya",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kategori_karya"
+                ],
+                "summary": "Create kategori karya",
+                "parameters": [
+                    {
+                        "description": "Kategori Karya body",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_create.Request"
+                            "$ref": "#/definitions/create.CreateKategoriKaryaRequest"
                         }
                     }
                 ],
@@ -573,19 +729,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_create.Response"
+                            "$ref": "#/definitions/create.CreateKategoriKaryaResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_create.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_create.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -593,19 +755,17 @@ const docTemplate = `{
         },
         "/api/kategori-karya/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "Get kategori karya detail by ID",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "Mengembalikan detail kategori karya berdasarkan UUID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "kategori_karya"
                 ],
-                "summary": "Ambil kategori karya berdasarkan ID",
+                "summary": "Get kategori karya by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -619,30 +779,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_getbyid.Response"
+                            "$ref": "#/definitions/getbyid.GetKategoriKaryaByIDResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_getbyid.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_getbyid.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Mengubah nama kategori karya berdasarkan ID",
+                "description": "Update kategori karya by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -662,12 +823,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Request Body",
+                        "description": "Update kategori karya body",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.Request"
+                            "$ref": "#/definitions/update.UpdateKategoriKaryaRequest"
                         }
                     }
                 ],
@@ -675,47 +836,54 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.Response"
+                            "$ref": "#/definitions/update.UpdateKategoriKaryaResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "Delete kategori karya by ID",
+                "consumes": [
+                    "application/json"
                 ],
-                "description": "Hapus satu kategori karya berdasarkan ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "kategori_karya"
                 ],
-                "summary": "Hapus Kategori Karya",
+                "summary": "Delete kategori karya",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID Kategori Karya",
+                        "description": "Kategori ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -725,25 +893,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_delete.SuccessResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_kategorikarya_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -751,44 +931,34 @@ const docTemplate = `{
         },
         "/api/review": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Mengambil semua review yang ada di database",
+                "description": "Ambil semua review",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "review"
                 ],
-                "summary": "Ambil Semua Review",
+                "summary": "Get all reviews",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ukk-smkn2_features_review_getall.Response"
-                            }
+                            "$ref": "#/definitions/getall.GetAllReviewResponseWrapper"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_getall.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Membuat data review untuk karya tertentu",
+                "description": "Create a new review untuk karya UKK",
                 "consumes": [
                     "application/json"
                 ],
@@ -798,15 +968,15 @@ const docTemplate = `{
                 "tags": [
                     "review"
                 ],
-                "summary": "Buat review baru",
+                "summary": "Create a new review",
                 "parameters": [
                     {
-                        "description": "Request body review",
+                        "description": "Review body",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_create.Request"
+                            "$ref": "#/definitions/create.CreateReviewRequest"
                         }
                     }
                 ],
@@ -814,19 +984,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_create.Response"
+                            "$ref": "#/definitions/create.CreateReviewResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_create.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_create.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -834,19 +1010,14 @@ const docTemplate = `{
         },
         "/api/review/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Mengambil satu data review berdasarkan ID",
+                "description": "Ambil detail review berdasarkan ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "review"
                 ],
-                "summary": "Ambil Review by ID",
+                "summary": "Get review by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -860,30 +1031,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_getbyid.Response"
+                            "$ref": "#/definitions/getbyid.GetReviewByIDResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_getbyid.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_getbyid.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Mengupdate data review berdasarkan ID",
+                "description": "Update komentar \u0026 rating review",
                 "consumes": [
                     "application/json"
                 ],
@@ -893,7 +1065,7 @@ const docTemplate = `{
                 "tags": [
                     "review"
                 ],
-                "summary": "Update Review by ID",
+                "summary": "Update review",
                 "parameters": [
                     {
                         "type": "string",
@@ -903,12 +1075,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Data review yang akan diupdate",
-                        "name": "body",
+                        "description": "Body update review",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_update.Request"
+                            "$ref": "#/definitions/update.UpdateReviewRequest"
                         }
                     }
                 ],
@@ -916,40 +1088,47 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_update.Response"
+                            "$ref": "#/definitions/update.UpdateReviewResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_update.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Hapus review berdasarkan ID",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "review"
                 ],
-                "summary": "Hapus Review",
+                "summary": "Delete review",
                 "parameters": [
                     {
                         "type": "string",
@@ -972,260 +1151,28 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_delete.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_review_delete.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/role": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get list of all roles",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "role"
-                ],
-                "summary": "Get All Roles",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ukk-smkn2_features_role_getall.Response"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_getall.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create a new role",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "role"
-                ],
-                "summary": "Create Role",
-                "parameters": [
-                    {
-                        "description": "Role create request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_create.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_create.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_create.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_create.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/role/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get single role by ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "role"
-                ],
-                "summary": "Get Role by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_getbyid.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_getbyid.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_getbyid.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Memperbarui data role dengan ID tertentu",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "role"
-                ],
-                "summary": "Update Role by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Request body data role",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_update.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_update.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_update.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_update.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_update.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a role by ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "role"
-                ],
-                "summary": "Delete Role",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role ID (UUID)",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_delete.SuccessResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_delete.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_delete.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_role_delete.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -1233,39 +1180,37 @@ const docTemplate = `{
         },
         "/api/siswa": {
             "get": {
-                "description": "Mengambil semua data siswa",
+                "description": "Get list of all siswa",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "siswa"
                 ],
-                "summary": "Get All Siswa",
+                "summary": "Get all siswa",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ukk-smkn2_features_siswa_getall.Response"
-                            }
+                            "$ref": "#/definitions/getall.GetAllSiswaResponseWrapper"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_getall.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Membuat data siswa baru",
+                "description": "Create a new siswa",
                 "consumes": [
                     "application/json"
                 ],
@@ -1275,15 +1220,15 @@ const docTemplate = `{
                 "tags": [
                     "siswa"
                 ],
-                "summary": "Create Siswa",
+                "summary": "Create siswa",
                 "parameters": [
                     {
-                        "description": "Request body data siswa",
+                        "description": "Siswa body",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.Request"
+                            "$ref": "#/definitions/create.CreateSiswaRequest"
                         }
                     }
                 ],
@@ -1291,190 +1236,20 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.Response"
+                            "$ref": "#/definitions/create.CreateSiswaResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_create.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/siswa/{id}": {
-            "get": {
-                "description": "Mengambil data siswa berdasarkan ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "siswa"
-                ],
-                "summary": "Get Siswa by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Siswa ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_getbyid.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_getbyid.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_getbyid.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Memperbarui data siswa dengan ID tertentu",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "siswa"
-                ],
-                "summary": "Update Siswa by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Siswa ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Request body data siswa",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_update.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_update.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_update.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_update.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_update.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Menghapus data siswa berdasarkan ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "siswa"
-                ],
-                "summary": "Delete Siswa",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Siswa ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/delete.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_delete.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_delete.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ukk-smkn2_features_siswa_delete.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/profile": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get Logged user profile",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/getprofile.GetUserResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1485,9 +1260,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/register": {
-            "post": {
-                "description": "Register a new user",
+        "/api/siswa/{id}": {
+            "get": {
+                "description": "Get a siswa detail by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -1495,16 +1270,81 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "siswa"
                 ],
+                "summary": "Get siswa by ID",
                 "parameters": [
                     {
-                        "description": "Create user request body",
+                        "type": "string",
+                        "description": "Siswa ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getbyid.GetSiswaResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a siswa by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "siswa"
+                ],
+                "summary": "Update siswa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Siswa ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Siswa update body",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.CreateUserRequest"
+                            "$ref": "#/definitions/update.UpdateSiswaRequest"
                         }
                     }
                 ],
@@ -1512,11 +1352,80 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/create.CreateUserResponseWrapper"
+                            "$ref": "#/definitions/update.UpdateSiswaResponseWrapper"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a siswa by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "siswa"
+                ],
+                "summary": "Delete siswa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Siswa ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1538,7 +1447,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "create.CreateUserRequest": {
+        "create.CreateAdminRequest": {
             "description": "Create user request body",
             "type": "object",
             "properties": {
@@ -1556,7 +1465,7 @@ const docTemplate = `{
                 }
             }
         },
-        "create.CreateUserResponse": {
+        "create.CreateAdminResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1567,32 +1476,644 @@ const docTemplate = `{
                 }
             }
         },
-        "create.CreateUserResponseWrapper": {
+        "create.CreateAdminResponseWrapper": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/create.CreateUserResponse"
+                    "$ref": "#/definitions/create.CreateAdminResponse"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "delete.MessageResponse": {
+        "create.CreateFileUploadRequest": {
             "type": "object",
             "properties": {
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateFileUploadResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateFileUploadResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/create.CreateFileUploadResponse"
+                },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "getbyid.ResponseError": {
+        "create.CreateKaryaUKKRequest": {
             "type": "object",
             "properties": {
-                "error": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateKaryaUKKResponse": {
+            "type": "object",
+            "properties": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateKaryaUKKResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/create.CreateKaryaUKKResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateKategoriKaryaRequest": {
+            "type": "object",
+            "properties": {
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateKategoriKaryaResponse": {
+            "type": "object",
+            "properties": {
+                "kategori_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateKategoriKaryaResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/create.CreateKategoriKaryaResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateReviewRequest": {
+            "type": "object",
+            "properties": {
+                "karya_id": {
+                    "type": "string"
+                },
+                "komentar": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
+        "create.CreateReviewResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "komentar": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "review_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateReviewResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/create.CreateReviewResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateSiswaRequest": {
+            "type": "object",
+            "properties": {
+                "jurusan": {
+                    "type": "string"
+                },
+                "kelas": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nis": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateSiswaResponse": {
+            "type": "object",
+            "properties": {
+                "jurusan": {
+                    "type": "string"
+                },
+                "kelas": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nis": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "create.CreateSiswaResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/create.CreateSiswaResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.FileUploadResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllFileUploadResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/getall.FileUploadResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllKaryaUKKResponse": {
+            "type": "object",
+            "properties": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllKaryaUKKResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/getall.GetAllKaryaUKKResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllKategoriKaryaResponse": {
+            "type": "object",
+            "properties": {
+                "kategori_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllKategoriKaryaResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/getall.GetAllKategoriKaryaResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllReviewResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/getall.ReviewResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllSiswaResponse": {
+            "type": "object",
+            "properties": {
+                "jurusan": {
+                    "type": "string"
+                },
+                "kelas": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nis": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.GetAllSiswaResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/getall.GetAllSiswaResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getall.ReviewResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "komentar": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "review_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.FileUploadDetailResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "file_id": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tipe": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetFileUploadByIDResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/getbyid.FileUploadDetailResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetKaryaUKKByIDResponse": {
+            "type": "object",
+            "properties": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "kategori_id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetKaryaUKKByIDResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/getbyid.GetKaryaUKKByIDResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetKategoriKaryaByIDResponse": {
+            "type": "object",
+            "properties": {
+                "kategori_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetKategoriKaryaByIDResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/getbyid.GetKategoriKaryaByIDResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetReviewByIDResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/getbyid.ReviewDetailResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetSiswaResponse": {
+            "type": "object",
+            "properties": {
+                "jurusan": {
+                    "type": "string"
+                },
+                "kelas": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nis": {
+                    "type": "string"
+                },
+                "siswa_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.GetSiswaResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/getbyid.GetSiswaResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "getbyid.ReviewDetailResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
+                "komentar": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "review_id": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -1631,20 +2152,9 @@ const docTemplate = `{
                 }
             }
         },
-        "ukk-smkn2_features_fileupload_create.ErrorResponse": {
+        "update.UpdateFileUploadRequest": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_create.Request": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
                 "nama": {
                     "type": "string"
                 },
@@ -1656,7 +2166,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ukk-smkn2_features_fileupload_create.Response": {
+        "update.UpdateFileUploadResponse": {
             "type": "object",
             "properties": {
                 "file_id": {
@@ -1669,686 +2179,163 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tipe": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_delete.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_delete.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_getall.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_getall.Response": {
-            "type": "object",
-            "properties": {
-                "file_id": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "tipe": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_getbyid.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_getbyid.Response": {
-            "type": "object",
-            "properties": {
-                "file_id": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "tipe": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_update.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_update.Request": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "tipe": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_fileupload_update.Response": {
-            "type": "object",
-            "properties": {
-                "file_id": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "tipe": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_create.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "Deskripsi error"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_create.Request": {
-            "type": "object",
-            "properties": {
-                "deskripsi": {
-                    "type": "string"
-                },
-                "judul": {
-                    "type": "string"
-                },
-                "kategori_id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_create.Response": {
-            "type": "object",
-            "properties": {
-                "deskripsi": {
-                    "type": "string"
-                },
-                "judul": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "kategori_id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_delete.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_getall.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_getall.Response": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deskripsi": {
-                    "type": "string"
-                },
-                "judul": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "kategori_id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "siswa_id": {
                     "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_getbyid.Response": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
                 },
-                "deskripsi": {
-                    "type": "string"
-                },
-                "judul": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "kategori_id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                },
-                "updated_at": {
+                "url": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_karyaukk_update.ErrorResponse": {
+        "update.UpdateFileUploadResponseWrapper": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_update.Request": {
-            "type": "object",
-            "properties": {
-                "deskripsi": {
-                    "type": "string"
+                "code": {
+                    "type": "integer"
                 },
-                "judul": {
-                    "type": "string"
+                "data": {
+                    "$ref": "#/definitions/update.UpdateFileUploadResponse"
                 },
-                "kategori_id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_karyaukk_update.Response": {
-            "type": "object",
-            "properties": {
-                "deskripsi": {
-                    "type": "string"
-                },
-                "judul": {
-                    "type": "string"
-                },
-                "karya_id": {
-                    "type": "string"
-                },
-                "kategori_id": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_create.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_create.Request": {
-            "type": "object",
-            "properties": {
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_create.Response": {
-            "type": "object",
-            "properties": {
-                "kategori_id": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_delete.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_delete.SuccessResponse": {
-            "type": "object",
-            "properties": {
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_kategorikarya_getall.ErrorResponse": {
+        "update.UpdateKaryaUKKRequest": {
             "type": "object",
             "properties": {
-                "error": {
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "thumbnail": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_kategorikarya_getall.Response": {
+        "update.UpdateKaryaUKKResponse": {
             "type": "object",
             "properties": {
+                "admin_id": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "judul": {
+                    "type": "string"
+                },
+                "karya_id": {
+                    "type": "string"
+                },
                 "kategori_id": {
                     "type": "string"
                 },
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_getbyid.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_getbyid.Response": {
-            "type": "object",
-            "properties": {
-                "kategori_id": {
+                "link": {
                     "type": "string"
                 },
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_update.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_update.Request": {
-            "type": "object",
-            "properties": {
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_kategorikarya_update.Response": {
-            "type": "object",
-            "properties": {
-                "kategori_id": {
+                "siswa_id": {
                     "type": "string"
                 },
-                "nama": {
+                "thumbnail": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_review_create.ErrorResponse": {
+        "update.UpdateKaryaUKKResponseWrapper": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_create.Request": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
-                "komentar": {
-                    "type": "string"
-                },
-                "rating": {
+                "code": {
                     "type": "integer"
                 },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_create.Response": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
+                "data": {
+                    "$ref": "#/definitions/update.UpdateKaryaUKKResponse"
                 },
-                "komentar": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "integer"
-                },
-                "review_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_delete.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_getall.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_getall.Response": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
-                "komentar": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "integer"
-                },
-                "review_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_getbyid.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_getbyid.Response": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
-                "komentar": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "integer"
-                },
-                "review_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_update.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_update.Request": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
-                "komentar": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_review_update.Response": {
-            "type": "object",
-            "properties": {
-                "karya_id": {
-                    "type": "string"
-                },
-                "komentar": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "integer"
-                },
-                "review_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_create.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_create.Request": {
-            "type": "object",
-            "properties": {
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_create.Response": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_delete.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_delete.SuccessResponse": {
-            "type": "object",
-            "properties": {
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_role_getall.ErrorResponse": {
+        "update.UpdateKategoriKaryaRequest": {
             "type": "object",
             "properties": {
-                "error": {
+                "nama": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_role_getall.Response": {
+        "update.UpdateKategoriKaryaResponse": {
+            "type": "object",
+            "properties": {
+                "kategori_id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                }
+            }
+        },
+        "update.UpdateKategoriKaryaResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/update.UpdateKategoriKaryaResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "update.UpdateReviewRequest": {
+            "type": "object",
+            "properties": {
+                "komentar": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
+        "update.UpdateReviewResponse": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "string"
                 },
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_getbyid.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_getbyid.Response": {
-            "type": "object",
-            "properties": {
-                "id": {
+                "komentar": {
                     "type": "string"
                 },
-                "nama": {
-                    "type": "string"
+                "rating": {
+                    "type": "integer"
                 }
             }
         },
-        "ukk-smkn2_features_role_update.ErrorResponse": {
+        "update.UpdateReviewResponseWrapper": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_update.Request": {
-            "type": "object",
-            "properties": {
-                "nama": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_role_update.Response": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
+                "code": {
+                    "type": "integer"
                 },
-                "nama": {
+                "data": {
+                    "$ref": "#/definitions/update.UpdateReviewResponse"
+                },
+                "message": {
                     "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_siswa_create.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_create.Request": {
+        "update.UpdateSiswaRequest": {
             "type": "object",
             "properties": {
                 "jurusan": {
@@ -2362,13 +2349,10 @@ const docTemplate = `{
                 },
                 "nis": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_siswa_create.Response": {
+        "update.UpdateSiswaResponse": {
             "type": "object",
             "properties": {
                 "jurusan": {
@@ -2385,129 +2369,19 @@ const docTemplate = `{
                 },
                 "siswa_id": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
                 }
             }
         },
-        "ukk-smkn2_features_siswa_delete.ErrorResponse": {
+        "update.UpdateSiswaResponseWrapper": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_getall.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_getall.Response": {
-            "type": "object",
-            "properties": {
-                "jurusan": {
-                    "type": "string"
+                "code": {
+                    "type": "integer"
                 },
-                "kelas": {
-                    "type": "string"
+                "data": {
+                    "$ref": "#/definitions/update.UpdateSiswaResponse"
                 },
-                "nama": {
-                    "type": "string"
-                },
-                "nis": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_getbyid.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_getbyid.Response": {
-            "type": "object",
-            "properties": {
-                "jurusan": {
-                    "type": "string"
-                },
-                "kelas": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "nis": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_update.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_update.Request": {
-            "type": "object",
-            "properties": {
-                "jurusan": {
-                    "type": "string"
-                },
-                "kelas": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "nis": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "ukk-smkn2_features_siswa_update.Response": {
-            "type": "object",
-            "properties": {
-                "jurusan": {
-                    "type": "string"
-                },
-                "kelas": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "nis": {
-                    "type": "string"
-                },
-                "siswa_id": {
-                    "type": "string"
-                },
-                "user_id": {
+                "message": {
                     "type": "string"
                 }
             }

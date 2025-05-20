@@ -1,4 +1,4 @@
-package user
+package admin
 
 import (
 	e "ukk-smkn2/entities"
@@ -12,15 +12,15 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func GetUser(db *gorm.DB, id string) (*e.User, error) {
-	var user e.User
-	result := db.Raw("SELECT * FROM users WHERE id = ? LIMIT 1", id).Scan(&user)
+func GetUser(db *gorm.DB, id string) (*e.Admin, error) {
+	var admin e.Admin
+	result := db.Raw("SELECT * FROM admins WHERE id = ? LIMIT 1", id).Scan(&admin)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &user, nil
+	return &admin, nil
 }
 
-func CreateUser(db *gorm.DB, user *e.User) error {
-	return db.Create(user).Error
+func CreateAdmin(db *gorm.DB, admin *e.Admin) error {
+	return db.Create(admin).Error
 }

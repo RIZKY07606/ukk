@@ -1,7 +1,6 @@
 package getbyid
 
 import (
-	"net/http"
 	"ukk-smkn2/entities"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,44 +8,45 @@ import (
 	"gorm.io/gorm"
 )
 
-type ResponseError struct {
-	Error string `json:"error"`
-}
-
 // GetKaryaUKKByID godoc
-// @Summary      Get Karya UKK by ID
-// @Description  Mengambil data Karya UKK berdasarkan ID
-// @Tags         KaryaUKK
-// @Accept       json
-// @Produce      json
-// @Param        id   path      string  true  "Karya UKK ID (UUID)"
-// @Success      200  {object}  Response
-// @Failure      400  {object}  ResponseError
-// @Failure      404  {object}  ResponseError
-// @Router       /api/karya-ukk/{id} [get]
-// @Security     BearerAuth
-func Handler(db *gorm.DB) fiber.Handler {
+//
+//	@Summary		Get karya UKK by ID
+//	@Description	Get detail karya UKK by ID
+//	@Tags			karya_ukk
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"KaryaUKK ID"
+//	@Success		200		{object}	GetKaryaUKKByIDResponseWrapper
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
+//	@Router			/api/karya-ukk/{id} [get]
+func GetKaryaUKKByID(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		karyaID, err := uuid.Parse(id)
+		idParam := c.Params("id")
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "ID tidak valid"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID"})
 		}
 
 		var karya entities.KaryaUKK
-		if err := db.First(&karya, "id = ?", karyaID).Error; err != nil {
-			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Karya tidak ditemukan"})
+		if err := db.Preload("Siswa").Preload("Kategori").Preload("Admin").
+			First(&karya, "id = ?", id).Error; err != nil {
+			return c.Status(404).JSON(fiber.Map{"error": "Karya UKK not found"})
 		}
 
-		return c.JSON(Response{
-			ID:         karya.ID,
-			Judul:      karya.Judul,
-			Deskripsi:  karya.Deskripsi,
-			Link:       karya.Link,
-			SiswaID:    karya.SiswaID,
-			KategoriID: karya.KategoriID,
-			CreatedAt:  karya.CreatedAt,
-			UpdatedAt:  karya.UpdatedAt,
+		return c.JSON(GetKaryaUKKByIDResponseWrapper{
+			Code:    200,
+			Message: "Success",
+			Data: GetKaryaUKKByIDResponse{
+				KaryaID:    karya.ID.String(),
+				Judul:      karya.Judul,
+				Deskripsi:  karya.Deskripsi,
+				Thumbnail:  karya.Thumbnail,
+				Link:       karya.Link,
+				SiswaID:    karya.SiswaID.String(),
+				KategoriID: karya.KategoriID.String(),
+				AdminID:    karya.AdminID.String(),
+			},
 		})
 	}
 }
