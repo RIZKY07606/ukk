@@ -18,7 +18,7 @@ import (
 //	@title			API UKK SMKN2 SURABAYA DOCUMENTATION
 //	@version		1.0
 //	@description	Documentation for API UKK SMKN2 Surabaya
-//	@host			ukk-3738-hxpe9rkh.leapcell.dev:8080
+//	@host			127.0.0.1:8080
 //	@BasePath		/
 
 // @securityDefinitions.apikey BearerAuth
@@ -26,9 +26,9 @@ import (
 // @name Authorization
 func main() {
 	if os.Getenv("ENV") != "production" {
-		docs.SwaggerInfo.Host = "ukk-3738-hxpe9rkh.leapcell.dev:8080"
+		docs.SwaggerInfo.Host = "127.0.0.1:8080"
 	} else {
-		docs.SwaggerInfo.Host = "ukk-3738-hxpe9rkh.leapcell.dev:8080" // change later
+		docs.SwaggerInfo.Host = "ukk-3738-hxpe9rkh.leapcell.dev" // change later
 	}
 
 	app := fiber.New(fiber.Config{
@@ -48,12 +48,5 @@ func main() {
 	routes.SetupRoutes(app, db)
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
-	app.Get("/kaithheathcheck", func(c *fiber.Ctx) error {
-        return c.SendStatus(fiber.StatusOK)
-	})
-	
-	err := app.Listen("0.0.0.0:8080")
-	if err != nil {
-		panic(err)
-	}
+	app.Listen(":8080")
 }
