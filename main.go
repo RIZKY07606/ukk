@@ -46,6 +46,7 @@ func main() {
 	db.AutoMigrate(&e.FileUpload{})
 	db.AutoMigrate(&e.Review{})
 	routes.SetupRoutes(app, db)
+	app.Static("/swagger", "./swagger")
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	app.Listen(":8080")
