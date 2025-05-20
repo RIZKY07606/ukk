@@ -17,7 +17,7 @@ import (
 
 //	@title			API UKK SMKN2 SURABAYA DOCUMENTATION
 //	@version		1.0
-//	@description		Documentation for API UKK SMKN2 Surabaya
+//	@description	Documentation for API UKK SMKN2 Surabaya
 //	@host			0.0.0.0:8080
 //	@BasePath		/
 
