@@ -26,7 +26,7 @@ import (
 // @name Authorization
 func main() {
 	if os.Getenv("ENV") != "production" {
-		docs.SwaggerInfo.Host = "127.0.0.1:8080"
+		docs.SwaggerInfo.Host = "0.0.0.0:8080"
 	} else {
 		docs.SwaggerInfo.Host = "your-deployment" // change later
 	}
