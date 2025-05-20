@@ -18,7 +18,7 @@ import (
 //	@title			API UKK SMKN2 SURABAYA DOCUMENTATION
 //	@version		1.0
 //	@description	Documentation for API UKK SMKN2 Surabaya
-//	@host			127.0.0.1:8080
+//	@host			0.0.0.0:8080
 //	@BasePath		/
 
 // @securityDefinitions.apikey BearerAuth
@@ -26,7 +26,7 @@ import (
 // @name Authorization
 func main() {
 	if os.Getenv("ENV") != "production" {
-		docs.SwaggerInfo.Host = "127.0.0.1:8080"
+		docs.SwaggerInfo.Host = "0.0.0.0:8080"
 	} else {
 		docs.SwaggerInfo.Host = "ukk-3738-asqo1w6n.leapcell.dev" // change later
 	}
