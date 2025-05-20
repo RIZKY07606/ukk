@@ -25,8 +25,13 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	if os.Getenv("ENV") != "production" {
-		docs.SwaggerInfo.Host = "0.0.0.0:8080"
+		docs.SwaggerInfo.Host = "localhost:" + port
 	} else {
 		docs.SwaggerInfo.Host = "ukk-3738-asqo1w6n.leapcell.dev" // change later
 	}
@@ -48,5 +53,9 @@ func main() {
 	routes.SetupRoutes(app, db)
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
-	app.Listen(":8080")
+	err := app.Listen("0.0.0.0:" + port)
+	if err != nil {
+		panic(err)
+	}
+
 }
