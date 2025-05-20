@@ -28,7 +28,7 @@ func main() {
 	if os.Getenv("ENV") != "production" {
 		docs.SwaggerInfo.Host = "0.0.0.0:8080"
 	} else {
-		docs.SwaggerInfo.Host = "0.0.0.0:8080" // change later
+		docs.SwaggerInfo.Host = "ukk-production-4fd8.up.railway.app" // change later
 	}
 
 	app := fiber.New(fiber.Config{
