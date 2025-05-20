@@ -28,7 +28,7 @@ func main() {
 	if os.Getenv("ENV") != "production" {
 		docs.SwaggerInfo.Host = "0.0.0.0:8080"
 	} else {
-		docs.SwaggerInfo.Host = "your-deployment" // change later
+		docs.SwaggerInfo.Host = "https://ukk-3738-hxpe9rkh.leapcell.dev" // change later
 	}
 
 	app := fiber.New(fiber.Config{
