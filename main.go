@@ -48,5 +48,12 @@ func main() {
 	routes.SetupRoutes(app, db)
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
-	app.Listen(":8080")
+	app.Get("/kaithheathcheck", func(c *fiber.Ctx) error {
+        return c.SendStatus(fiber.StatusOK)
+	})
+	
+	err := app.Listen("0.0.0.0:8080")
+	if err != nil {
+		panic(err)
+	}
 }
