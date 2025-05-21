@@ -11,6 +11,7 @@ import (
 	_ "ukk-smkn2/docs" // for Swagger docs
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
 )
@@ -35,6 +36,11 @@ func main() {
 		EnablePrintRoutes: true,
 	})
 	app.Use(logger.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+	}))
 	database.Connect()
 	db := database.DB
 	// db.AutoMigrate(&e.User{}) //migrate later
