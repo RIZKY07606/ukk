@@ -38,6 +38,7 @@ func CreateSiswa(db *gorm.DB) fiber.Handler {
 			Nama:      req.Nama,
 			Kelas:     req.Kelas,
 			Jurusan:   req.Jurusan,
+			Angkatan:  req.Angkatan,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
@@ -50,11 +51,12 @@ func CreateSiswa(db *gorm.DB) fiber.Handler {
 			Code:    200,
 			Message: "Siswa created successfully",
 			Data: CreateSiswaResponse{
-				SiswaID: siswa.ID.String(),
-				NIS:     siswa.NIS,
-				Nama:    siswa.Nama,
-				Kelas:   siswa.Kelas,
-				Jurusan: siswa.Jurusan,
+				SiswaID:  siswa.ID.String(),
+				NIS:      siswa.NIS,
+				Nama:     siswa.Nama,
+				Kelas:    siswa.Kelas,
+				Jurusan:  siswa.Jurusan,
+				Angkatan: siswa.Angkatan,
 			},
 		})
 	}

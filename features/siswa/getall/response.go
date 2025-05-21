@@ -1,11 +1,12 @@
 package getall
 
 type GetAllSiswaResponse struct {
-	SiswaID string `json:"siswa_id"`
-	NIS     string `json:"nis"`
-	Nama    string `json:"nama"`
-	Kelas   string `json:"kelas"`
-	Jurusan string `json:"jurusan"`
+	SiswaID  string `json:"siswa_id"`
+	NIS      string `json:"nis"`
+	Nama     string `json:"nama"`
+	Kelas    string `json:"kelas"`
+	Jurusan  string `json:"jurusan"`
+	Angkatan string `json:"angkatan"`
 }
 
 type GetAllSiswaResponseWrapper struct {

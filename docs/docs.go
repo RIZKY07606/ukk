@@ -1697,6 +1697,9 @@ const docTemplate = `{
         "create.CreateSiswaRequest": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -1714,6 +1717,9 @@ const docTemplate = `{
         "create.CreateSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -1882,6 +1888,9 @@ const docTemplate = `{
         "getall.GetAllSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2064,6 +2073,9 @@ const docTemplate = `{
         "getbyid.GetSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2338,6 +2350,9 @@ const docTemplate = `{
         "update.UpdateSiswaRequest": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2355,6 +2370,9 @@ const docTemplate = `{
         "update.UpdateSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2399,11 +2417,11 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "127.0.0.1:8080",
+	Host:             "0.0.0.0:8080",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "UKK SMKN2 SURABAYA DOCUMENTATION",
-	Description:      "Restful API using go fiber",
+	Title:            "API UKK SMKN2 SURABAYA DOCUMENTATION",
+	Description:      "Documentation for API UKK SMKN2 Surabaya",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

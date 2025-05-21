@@ -41,11 +41,12 @@ func GetSiswaByID(db *gorm.DB) fiber.Handler {
 			Code:    200,
 			Message: "Success",
 			Data: GetSiswaResponse{
-				SiswaID: siswa.ID.String(),
-				NIS:     siswa.NIS,
-				Nama:    siswa.Nama,
-				Kelas:   siswa.Kelas,
-				Jurusan: siswa.Jurusan,
+				SiswaID:  siswa.ID.String(),
+				NIS:      siswa.NIS,
+				Nama:     siswa.Nama,
+				Kelas:    siswa.Kelas,
+				Jurusan:  siswa.Jurusan,
+				Angkatan: siswa.Angkatan,
 			},
 		})
 	}

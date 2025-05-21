@@ -27,11 +27,12 @@ func GetAllSiswa(db *gorm.DB) fiber.Handler {
 		var responseData []GetAllSiswaResponse
 		for _, s := range siswaList {
 			responseData = append(responseData, GetAllSiswaResponse{
-				SiswaID: s.ID.String(),
-				NIS:     s.NIS,
-				Nama:    s.Nama,
-				Kelas:   s.Kelas,
-				Jurusan: s.Jurusan,
+				SiswaID:  s.ID.String(),
+				NIS:      s.NIS,
+				Nama:     s.Nama,
+				Kelas:    s.Kelas,
+				Jurusan:  s.Jurusan,
+				Angkatan: s.Angkatan,
 			})
 		}
 

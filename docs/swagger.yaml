@@ -163,6 +163,8 @@ definitions:
     type: object
   create.CreateSiswaRequest:
     properties:
+      angkatan:
+        type: string
       jurusan:
         type: string
       kelas:
@@ -174,6 +176,8 @@ definitions:
     type: object
   create.CreateSiswaResponse:
     properties:
+      angkatan:
+        type: string
       jurusan:
         type: string
       kelas:
@@ -283,6 +287,8 @@ definitions:
     type: object
   getall.GetAllSiswaResponse:
     properties:
+      angkatan:
+        type: string
       jurusan:
         type: string
       kelas:
@@ -401,6 +407,8 @@ definitions:
     type: object
   getbyid.GetSiswaResponse:
     properties:
+      angkatan:
+        type: string
       jurusan:
         type: string
       kelas:
@@ -579,6 +587,8 @@ definitions:
     type: object
   update.UpdateSiswaRequest:
     properties:
+      angkatan:
+        type: string
       jurusan:
         type: string
       kelas:
@@ -590,6 +600,8 @@ definitions:
     type: object
   update.UpdateSiswaResponse:
     properties:
+      angkatan:
+        type: string
       jurusan:
         type: string
       kelas:
@@ -610,11 +622,11 @@ definitions:
       message:
         type: string
     type: object
-host: 127.0.0.1:8080
+host: 0.0.0.0:8080
 info:
   contact: {}
-  description: Restful API using go fiber
-  title: your own API application
+  description: Documentation for API UKK SMKN2 Surabaya
+  title: API UKK SMKN2 SURABAYA DOCUMENTATION
   version: "1.0"
 paths:
   /api/admin/profile:

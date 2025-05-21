@@ -1,12 +1,12 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Restful API using go fiber",
-        "title": "your own API application",
+        "description": "Documentation for API UKK SMKN2 Surabaya",
+        "title": "API UKK SMKN2 SURABAYA DOCUMENTATION",
         "contact": {},
         "version": "1.0"
     },
-    "host": "127.0.0.1:8080",
+    "host": "0.0.0.0:8080",
     "basePath": "/",
     "paths": {
         "/api/admin/profile": {
@@ -1691,6 +1691,9 @@
         "create.CreateSiswaRequest": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -1708,6 +1711,9 @@
         "create.CreateSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -1876,6 +1882,9 @@
         "getall.GetAllSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2058,6 +2067,9 @@
         "getbyid.GetSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2332,6 +2344,9 @@
         "update.UpdateSiswaRequest": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },
@@ -2349,6 +2364,9 @@
         "update.UpdateSiswaResponse": {
             "type": "object",
             "properties": {
+                "angkatan": {
+                    "type": "string"
+                },
                 "jurusan": {
                     "type": "string"
                 },

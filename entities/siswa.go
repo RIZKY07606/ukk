@@ -13,6 +13,7 @@ type Siswa struct {
 	Nama      string         `gorm:"not null" json:"nama"`
 	Kelas     string         `gorm:"not null" json:"kelas"`
 	Jurusan   string         `gorm:"not null" json:"jurusan"`
+	Angkatan  string         `gorm:"not null" json:"angkatan"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`

@@ -52,6 +52,7 @@ func UpdateSiswa(db *gorm.DB) fiber.Handler {
 		siswa.Nama = req.Nama
 		siswa.Kelas = req.Kelas
 		siswa.Jurusan = req.Jurusan
+		siswa.Angkatan = req.Angkatan
 		siswa.UpdatedAt = time.Now()
 
 		if err := db.Save(&siswa).Error; err != nil {
@@ -62,11 +63,12 @@ func UpdateSiswa(db *gorm.DB) fiber.Handler {
 			Code:    200,
 			Message: "Siswa updated successfully",
 			Data: UpdateSiswaResponse{
-				SiswaID: siswa.ID.String(),
-				NIS:     siswa.NIS,
-				Nama:    siswa.Nama,
-				Kelas:   siswa.Kelas,
-				Jurusan: siswa.Jurusan,
+				SiswaID:  siswa.ID.String(),
+				NIS:      siswa.NIS,
+				Nama:     siswa.Nama,
+				Kelas:    siswa.Kelas,
+				Jurusan:  siswa.Jurusan,
+				Angkatan: siswa.Angkatan,
 			},
 		})
 	}
