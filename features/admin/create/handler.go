@@ -50,6 +50,7 @@ func Register(db *gorm.DB) fiber.Handler {
 		admin := e.Admin{
 			ID:        uuid.New(),
 			Nama:      req.Nama,
+			Email:     req.Email,
 			Password:  hashedPassword,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
